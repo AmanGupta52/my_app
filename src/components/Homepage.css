@@ -1,0 +1,257 @@
+/* Hero Section */
+
+@keyframes fadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero .text-section {
+  animation: fadeSlideUp 1.2s ease-out forwards;
+  opacity: 0; /* initially hidden until animated */
+  animation-delay: 0.3s;
+}
+
+/*text anmation8 */
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.slide-in {
+  animation: slideInFromLeft 1.2s ease-out forwards;
+  opacity: 0;
+}
+
+
+/* Section fade-in animation */
+.fade-in-section > * {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.fade-in-section > *:nth-child(1) { animation-delay: 0.1s; }
+.fade-in-section > *:nth-child(2) { animation-delay: 0.2s; }
+.fade-in-section > *:nth-child(3) { animation-delay: 0.3s; }
+.fade-in-section > *:nth-child(4) { animation-delay: 0.4s; }
+.fade-in-section > *:nth-child(5) { animation-delay: 0.5s; }
+.fade-in-section > *:nth-child(6) { animation-delay: 0.6s; }
+
+
+
+
+
+/* Floating Buttons */
+.whatsapp-float,
+.call-float {
+  z-index: 999;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out;
+}
+
+.whatsapp-float:hover,
+.call-float:hover {
+  transform: scale(1.1);
+}
+
+/* Navbar */
+.navbar-brand {
+  font-size: 1.5rem;
+}
+
+.navbar-nav .nav-link {
+  font-weight: 500;
+  color: #333;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #f4b400;
+}
+
+/* Section Headings */
+section h4,
+section h5 {
+  font-weight: 700;
+}
+
+section p {
+  font-size: 0.95rem;
+}
+
+/* Cards */
+.card {
+  border-radius: 12px;
+}
+
+.card-body h6 {
+  font-weight: 600;
+}
+
+.card-body p {
+  font-size: 0.85rem;
+}
+
+/* Badges for therapy list */
+.badge {
+  font-size: 0.75rem;
+  padding: 0.5em 0.75em;
+  border-radius: 20px;
+}
+
+/* Accordion FAQ */
+.accordion-button {
+  font-weight: 600;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: #fff3cd;
+  color: #000;
+}
+
+/* Footer */
+footer a {
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .navbar-nav {
+    text-align: center;
+  }
+}
+
+.whatsapp-float, .call-float {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #25d366;
+    color: white;
+    font-size: 22px;
+    padding: 12px;
+    border-radius: 50%;
+    z-index: 999;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    text-align: center;
+    margin-top: 10px;
+    transition: 0.3s;
+  }
+  
+  .call-float {
+    right: 80px;
+    background: red;
+  }
+  
+  .dropdown-menu {
+  transition: all 0.3s ease;
+}
+.dropdown-menu .dropdown-item:hover {
+  background-color: #ffc107; /* Bootstrap warning yellow */
+  color: #000;               /* black text for contrast */
+  font-weight: 600;          /* optional: bold text */
+}
+.dropdown-menu .dropdown-item.active {
+  background-color: #ffca2c;
+  color: #000;
+}
+/* ======================= */
+/* 1. Shadow on Section Titles */
+/* ======================= */
+section h4, section h5 {
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.05), 0 2px 2px rgba(244, 180, 0, 0.25);
+}
+
+/* ======================= */
+/* 2. Stylish Divider Line */
+/* ======================= */
+.section-divider {
+  width: 60px;
+  height: 4px;
+  margin: 0.5rem auto 1.5rem;
+  background: linear-gradient(to right, #f4b400, #e07a5f);
+  border-radius: 2px;
+}
+
+/* ======================= */
+/* 3. Fade-in on Scroll */
+/* ======================= */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease-out;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ======================= */
+/* 4. Testimonial Glow Card */
+/* ======================= */
+.testimonial-card {
+  border-left: 5px solid #f4b400;
+  background-color: #fffefa;
+  padding: 1.25rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: 0.3s;
+}
+.testimonial-card:hover {
+  background-color: #fff3b0;
+  transform: translateY(-5px);
+}
+
+/* ======================= */
+/* 5. Button Pulse Hover */
+/* ======================= */
+.btn-warning:hover {
+  animation: pulse 0.4s ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+.score-box {
+  background: rgb(226, 165, 78);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+}
+    
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 1s forwards ease;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  transition: 0.3s ease;
+}

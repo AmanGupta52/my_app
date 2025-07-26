@@ -1,0 +1,12 @@
+.hero-section {
+  background-image: ('/images/image.png'); /* put image in public/images */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* makes it stay in place */
+  height: 60vh;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}

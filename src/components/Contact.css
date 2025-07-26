@@ -1,0 +1,9 @@
+.contact-section {
+  background: #fef7f4; /* light peach shade from screenshot */
+}
+
+.contact-section h2 {
+  border-bottom: 3px solid orange;
+  display: inline-block;
+  padding-bottom: 5px;
+}
