@@ -3,6 +3,7 @@ import './Experts.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from 'react-router-dom';
 import Header from './Header';
+import ClientFeedback from './ClientFeedback'
 
 
 
@@ -171,26 +172,8 @@ function Experts() {
         </div>
       </section>
 
-      <section className="client-feedback py-5 text-center">
-        <h3>OUR CLIENT FEEDBACK</h3>
-        <div className="d-flex flex-wrap justify-content-center mt-4">
-          <div className="feedback-box m-3 p-3 bg-white shadow-sm rounded">
-            <strong>Sagun Naik</strong>
-            <p className="text-muted small">2 months ago</p>
-            <p><em>"Mind-Blowing Guidance"</em></p>
-          </div>
-          <div className="feedback-box m-3 p-3 bg-white shadow-sm rounded">
-            <strong>Prachi Mohite</strong>
-            <p className="text-muted small">1 month ago</p>
-            <p><em>"Transformative Experience"</em></p>
-          </div>
-          <div className="feedback-box m-3 p-3 bg-white shadow-sm rounded">
-            <strong>Aarav Mehta</strong>
-            <p className="text-muted small">8 months ago</p>
-            <p><em>"Exceptional Guidance"</em></p>
-          </div>
-        </div>
-      </section>
+      {/* Feedback */}
+      <ClientFeedback />
     </div>
 
 </>

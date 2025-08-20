@@ -51,7 +51,7 @@ function Life_coaching() {
   {/* 🔤 Content */}
   <div className="position-relative z-2">
     <h1 className="fw-bold bg-opacity-50 px-4 py-2 rounded">
-      MOTIVATIONAL TALKS / SPEAKER'S
+      Life Coaching
     </h1>
   </div>
 </header>
@@ -60,9 +60,14 @@ function Life_coaching() {
       <div className="container my-5">
         <div className="row">
           <div className="col-md-8">
-            <img src="/images/speaker.jpg" alt="Speaker" className="img-fluid rounded mb-4" />
-            <h3 className="fw-bold mb-3">Motivational Talks / Speaker's</h3>
-            <p>We believe that motivational talks hold the potential to transform lives, sparking inspiration and unlocking the strength within us to overcome challenges...</p>
+            <img src="/images/https://believeconsultancy.in/images/home/Life%20Coaching%201.jpg.jpg" alt="Speaker" className="img-fluid rounded mb-4" />
+            <h3 className="fw-bold mb-3">Life Coaching</h3>
+            <p><b>Life coaching </b>is a transformative process that guides individuals through personal and professional challenges to reach their fullest potential. It involves a partnership between the coach and the client, aiming to unlock latent abilities and foster an environment of growth. Coaches help clients set realistic goals, encouraging accountability while providing the tools and strategies needed for success. This personalized support is crucial for navigating life's complexities, making life coaching an invaluable resource for those seeking meaningful changes.</p>
+            <p>In today's fast-paced world, <b>stress and uncertainty</b> often cloud our judgment and decision-making capabilities. Life coaches step in to clear this fog, offering clarity and fresh perspectives on personal and professional dilemmas. They employ various techniques, such as motivational interviewing and cognitive behavioral strategies, to empower clients to overcome internal barriers. This leads to improved self-confidence and decision-making skills, essential for personal growth and career advancement.</p>
+            <p><b>  Life coaching</b> is not just about achieving immediate goals but also about initiating sustainable change. Coaches provide ongoing support to ensure that improvements are lasting and deeply integrated into the client's lifestyle. By fostering resilience and adaptability, life coaches help individuals navigate future challenges independently. This ongoing growth process not only enhances personal satisfaction and performance but also contributes to a healthier, more balanced life, illustrating the profound impact of life coaching.</p>
+
+
+
             {/* truncated for brevity */}
           </div>
 

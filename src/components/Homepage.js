@@ -22,21 +22,7 @@ function Homepage() {
   }, []);
   return (
     <>
-    <div>
-      {/* Topbar */}
-      <div className="bg-dark text-white py-2 px-4 d-flex justify-content-between align-items-center small">
-        <div>
-          <i className="bi bi-envelope me-2"></i> believeconsultancy79@gmail.com
-          <i className="bi bi-telephone ms-4 me-2"></i> +91 88501 65438
-        </div>
-        <div>
-          <i className="bi bi-facebook mx-1"></i>
-          <i className="bi bi-instagram mx-1"></i>
-          <i className="bi bi-linkedin mx-1"></i>
-          <i className="bi bi-youtube mx-1"></i>
-        </div>
-      </div>
-
+    <div style={{ backgroundColor: '#F8F2DB' }}>
       {/* Navbar */}
       <Header />
 
@@ -51,7 +37,7 @@ function Homepage() {
     backgroundRepeat: "no-repeat",
     color: "#000",
     position: "relative",
-    minHeight: "100vh"
+    minHeight: "90vh"
   }}
 >
   <div className="text-section flex-grow-1 text-center text-md-start mb-4 mb-md-0">
@@ -100,30 +86,30 @@ function Homepage() {
     lineHeight: '1.6',
   }}
 >
-  <h5
+  <h7
     className="fw-bold mb-2"
     style={{
       fontSize: '1.1rem',
       textTransform: 'uppercase',
       animationDelay: '0.1s',
     }}
-  >
-    WE CAN HELP WITH THE FOLLOWING THROUGH OUR
-  </h5>
+  ><b>
+    WE CAN HELP WITH THE FOLLOWING THROUGH OUR</b>
+  </h7>
 
-  <p
+  <h5
     className="mb-2"
     style={{
       fontSize: '0.85rem',
-      color: '#6c757d',
+      color: '#ec821fff',
       textTransform: 'uppercase',
       letterSpacing: '0.5px',
-      fontWeight: '600',
+      fontWeight: '1000',
       animationDelay: '0.2s',
     }}
   >
     WELLNESS & THERAPY SOLUTIONS
-  </p>
+  </h5>
 
   <div
     className="mb-2"
@@ -138,33 +124,30 @@ function Homepage() {
     Migraines | Aches & Pains | Eating Disorders | Body Dysmorphia | Panic Disorder
   </div>
 
-  <p
-    className="mt-3 mb-1"
+  <h7
+    className="fw-bold mb-2"
     style={{
-      fontSize: '0.85rem',
-      color: '#6c757d',
+      fontSize: '1.1rem',
       textTransform: 'uppercase',
-      letterSpacing: '0.5px',
-      fontWeight: '600',
-      animationDelay: '0.4s',
+      animationDelay: '0.1s',
     }}
   >
     AND THROUGH OUR
-  </p>
+  </h7>
 
-  <p
+  <h5
     className="mb-2"
     style={{
       fontSize: '0.85rem',
-      color: '#6c757d',
+      color: '#ec821fff',
       textTransform: 'uppercase',
       letterSpacing: '0.5px',
-      fontWeight: '600',
-      animationDelay: '0.5s',
+      fontWeight: '1000',
+      animationDelay: '0.2s',
     }}
   >
     PSYCHOLOGICAL HEALTH SOLUTIONS
-  </p>
+  </h5>
 
   <div
     style={{
@@ -222,7 +205,7 @@ function Homepage() {
     backgroundAttachment: "fixed", // key part for scroll-over effect
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat",
-    minHeight: "50vh",
+    minHeight: "40vh",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -234,11 +217,11 @@ function Homepage() {
       backgroundColor: "rgba(0, 0, 0, 0.5)",
       padding: "2rem",
       borderRadius: "10px",
-      maxWidth: "700px",
+      maxWidth: "1000px",
       margin: "0 auto"
     }}
   >
-    <h5 className="fw-bold mb-3" style={{ fontSize: '1.1rem' }}>
+    <h5 className="fw-bold mb-3" style={{ fontSize: '1.4rem' }}>
       We provide expert services and guidance for personal, professional and emotional growth.
     </h5>
     <a href="/contact" className="btn btn-warning mt-2">

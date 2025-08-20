@@ -25,19 +25,6 @@ function Service() {
   return (
      <>
     <div style={{ backgroundColor: '#F8F2DB' }}>
-      {/* Topbar */}
-      <div className="bg-dark text-white py-2 px-4 d-flex justify-content-between align-items-center small">
-        <div>
-          <i className="bi bi-envelope me-2"></i> believeconsultancy79@gmail.com
-          <i className="bi bi-telephone ms-4 me-2"></i> +91 88501 65438
-        </div>
-        <div>
-          <i className="bi bi-facebook mx-1"></i>
-          <i className="bi bi-instagram mx-1"></i>
-          <i className="bi bi-linkedin mx-1"></i>
-          <i className="bi bi-youtube mx-1"></i>
-        </div>
-      </div>
 
         {/* Navbar */}
      <Header />

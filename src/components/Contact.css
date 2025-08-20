@@ -1,9 +1,11 @@
-.contact-section {
-  background: #fef7f4; /* light peach shade from screenshot */
+textarea::placeholder,
+input::placeholder {
+  color: #999;
+  font-style: italic;
 }
 
-.contact-section h2 {
-  border-bottom: 3px solid orange;
-  display: inline-block;
-  padding-bottom: 5px;
+button.btn-warning:hover {
+  background-color: #e0a800;
+  transform: scale(1.02);
+  transition: all 0.2s ease;
 }
