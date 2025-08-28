@@ -470,21 +470,6 @@ function Homepage() {
 <ClientFeedback />
 
 
-{/* Consultation Form */}
-<section className="bg-light py-5 text-center">
-  <h4 className="fw-bold mb-4">Book Your Consultation Now</h4>
-  <div className="container d-flex flex-column flex-md-row align-items-center justify-content-center gap-5">
-    <img src="/images/contact-img.jpg" alt="Consult" className="rounded shadow img-fluid rounded" style={{ maxWidth: '400px' }}/>
-    <form className="w-100" style={{ maxWidth: '400px' }}>
-      <input type="text" placeholder="Name" className="form-control mb-3" required />
-      <input type="email" placeholder="Email" className="form-control mb-3" required />
-      <input type="text" placeholder="Phone" className="form-control mb-3" required />
-      <textarea placeholder="Message" rows="3" className="form-control mb-3"></textarea>
-      <button type="submit" className="btn btn-warning w-100">Submit</button>
-    </form>
-  </div>
-</section>
-
 
 <section className="p-5 text-center bg-light">
   <h5 className="fw-bold mb-2">We Can Help With the Following Through Our</h5>
