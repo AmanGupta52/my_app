@@ -4,35 +4,69 @@
   left: 0;
   width: 100%;
   height: 100%;
-  backdrop-filter: blur(6px);
-  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 1050;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 10px;
+}
+/* Style the role dropdown properly */
+.glass-input.select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: rgba(255, 255, 255, 0.25); /* semi-transparent background */
+  color: #000; /* dark text */
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  width: 100%;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.glass-input.select option {
+  color: #000; /* make dropdown options text dark */
+  background-color: #fff; /* optional: white background for options */
+}
+
+.glass-input.select:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
 }
 
 .auth-card {
-  width: 90%;
-  max-width: 400px;
-  padding: 30px;
-  border-radius: 15px;
+  width: 100%;
+  max-width: 450px;
+  padding: 35px 30px;
+  border-radius: 20px;
   position: relative;
   animation: slideFadeIn 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .glassmorphism {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(12px);
   color: #fff;
 }
 
 .glass-input {
   background-color: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #fff;
+  width: 100%;
+  font-size: 1rem;
+  transition: all 0.3s ease;
 }
 
 .glass-input::placeholder {
@@ -41,8 +75,9 @@
 
 .glass-input:focus {
   outline: none;
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.35);
   color: #fff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
 }
 
 .close-btn {
@@ -51,15 +86,21 @@
   top: 20px;
   border: none;
   background: none;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   color: white;
   cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.close-btn:hover {
+  transform: scale(1.2);
 }
 
 .toggle-link {
   color: #ffc107;
   cursor: pointer;
   text-decoration: underline;
+  font-weight: 500;
 }
 
 @keyframes slideFadeIn {
@@ -72,6 +113,7 @@
     transform: translateY(0);
   }
 }
+
 .alert {
   text-align: center;
   font-size: 0.9rem;
@@ -81,16 +123,46 @@
 }
 
 .alert-success {
-  background-color: rgba(40, 167, 69, 0.2);
+  background-color: rgba(40, 167, 69, 0.25);
   color: #28a745;
 }
 
 .alert-danger {
-  background-color: rgba(220, 53, 69, 0.2);
+  background-color: rgba(220, 53, 69, 0.25);
   color: #dc3545;
 }
 
 .spinner-border {
   width: 1.25rem;
   height: 1.25rem;
+}
+
+.d-flex {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: scale(1.02);
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 25px 20px;
+  }
+
+  .glass-input {
+    padding: 8px 10px;
+  }
+
+  .close-btn {
+    font-size: 1.4rem;
+  }
 }

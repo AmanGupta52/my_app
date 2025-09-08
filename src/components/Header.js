@@ -2,21 +2,14 @@
 import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import LoginModal from "./LoginModal";
-import { AuthContext } from "../context/AuthContext"; // ✅ import context
+import Notifications from "./Notifications";
+import { AuthContext } from "../context/AuthContext";
 
 function Header() {
   const [showModal, setShowModal] = useState(false);
-  const { user, login, logout } = useContext(AuthContext); // ✅ use context
-
-  const handleLogin = (userData) => {
-    console.log("✅ Logged in user:", userData);
-    login(userData); // ✅ update global context + localStorage
-    setShowModal(false);
-  };
-
-  const handleLogout = () => {
-    logout(); // ✅ clear context + localStorage
-  };
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const { user, logout } = useContext(AuthContext);
 
   return (
     <>
@@ -65,7 +58,8 @@ function Header() {
         </button>
 
         <div id="navbarNav" className="collapse navbar-collapse">
-          <ul className="navbar-nav ms-auto">
+          {/* Center Nav Links */}
+          <ul className="navbar-nav mx-auto">
             <li className="nav-item">
               <Link to="/" className="nav-link">
                 Home
@@ -77,38 +71,20 @@ function Header() {
               </Link>
             </li>
 
-            {/* Services dropdown */}
+            {/* Services Dropdown */}
             <li
-              className="nav-item dropdown"
-              onMouseEnter={() => {
-                document.getElementById("servicesMenu").classList.add("show");
-                document
-                  .getElementById("servicesMenuLink")
-                  .setAttribute("aria-expanded", "true");
-              }}
-              onMouseLeave={() => {
-                document.getElementById("servicesMenu").classList.remove("show");
-                document
-                  .getElementById("servicesMenuLink")
-                  .setAttribute("aria-expanded", "false");
-              }}
+              className={`nav-item dropdown ${servicesOpen ? "show" : ""}`}
+              onMouseEnter={() => setServicesOpen(true)}
+              onMouseLeave={() => setServicesOpen(false)}
             >
-              <Link
-                to="/service"
+              <span
                 className="nav-link dropdown-toggle"
-                id="servicesMenuLink"
                 role="button"
-                aria-expanded="false"
-                onClick={(e) => e.preventDefault()}
+                aria-expanded={servicesOpen}
               >
-                Services <i className="bi ms-1"></i>
-              </Link>
-
-              <ul
-                className="dropdown-menu"
-                id="servicesMenu"
-                aria-labelledby="servicesMenuLink"
-              >
+                Services
+              </span>
+              <ul className={`dropdown-menu ${servicesOpen ? "show" : ""}`}>
                 <li>
                   <Link to="/motivation" className="dropdown-item">
                     Motivational Talks
@@ -169,21 +145,21 @@ function Header() {
             </li>
           </ul>
 
-          <Link to="/experts" className="btn btn-warning ms-3">
-            Book a Session
-          </Link>
-
-          {/* Login / User Section */}
+          {/* Right Side */}
           <div className="d-flex align-items-center">
+            <Link to="/experts" className="btn btn-warning me-3">
+              Book a Session
+            </Link>
+
             {!user ? (
               <button
-                className="btn btn-warning ms-3 d-flex align-items-center gap-2"
+                className="btn btn-warning d-flex align-items-center gap-2"
                 onClick={() => setShowModal(true)}
               >
                 <i className="bi bi-person-circle"></i> Sign In
               </button>
             ) : (
-              <div className="dropdown ms-3">
+              <div className="dropdown">
                 <button
                   className="btn btn-light dropdown-toggle d-flex align-items-center border rounded-pill px-3 py-1 shadow-sm"
                   type="button"
@@ -197,16 +173,20 @@ function Header() {
                     width="32"
                     height="32"
                     className="me-2 rounded-circle border border-2 border-warning"
-                    style={{
-                      boxShadow: "0 0 5px rgba(255, 193, 7, 0.5)",
-                    }}
+                    style={{ boxShadow: "0 0 5px rgba(255, 193, 7, 0.5)" }}
                   />
-                  <span className="fw-semibold">{user.fullName}</span>
+                  <span className="fw-semibold">
+                    {user.fullName || user.email}
+                  </span>
                 </button>
+
                 <ul className="dropdown-menu dropdown-menu-end mt-2 shadow-sm">
                   <li>
                     <span className="dropdown-item-text fw-bold">
-                      👋 Hi, <span className="text-primary">{user.fullName}</span>
+                      👋 Hi,{" "}
+                      <span className="text-primary">
+                        {user.fullName || user.email}
+                      </span>
                     </span>
                   </li>
                   <li>
@@ -217,10 +197,47 @@ function Header() {
                   <li>
                     <hr className="dropdown-divider" />
                   </li>
+
+                  {/* Role-based dashboard links */}
+                  {user.role === "admin" && (
+                    <li>
+                      <Link to="/admin-dashboard" className="dropdown-item">
+                        <i className="bi bi-speedometer2 me-2"></i> Admin
+                        Dashboard
+                      </Link>
+                    </li>
+                  )}
+                  {user.role === "moderator" && (
+                    <li>
+                      <Link to="/moderator-dashboard" className="dropdown-item">
+                        <i className="bi bi-shield-lock me-2"></i> Moderator
+                        Dashboard
+                      </Link>
+                    </li>
+                  )}
+                  {user.role === "expert" && (
+                    <li>
+                      <Link to="/expert-dashboard" className="dropdown-item">
+                        <i className="bi bi-mortarboard me-2"></i> Expert
+                        Dashboard
+                      </Link>
+                    </li>
+                  )}
+                  {user.role === "user" && (
+                    <li>
+                      <Link to="/profile" className="dropdown-item">
+                        <i className="bi bi-person me-2"></i> My Profile
+                      </Link>
+                    </li>
+                  )}
+
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
                   <li>
                     <button
                       className="dropdown-item text-danger"
-                      onClick={handleLogout}
+                      onClick={logout}
                     >
                       <i className="bi bi-box-arrow-right me-2"></i> Logout
                     </button>
@@ -228,15 +245,28 @@ function Header() {
                 </ul>
               </div>
             )}
+
+            {/* Notifications */}
+            <button
+              className="btn btn-light position-relative ms-3"
+              onClick={() => setShowNotifications(true)}
+            >
+              <i className="bi bi-bell" style={{ fontSize: "1.2rem" }}></i>
+            </button>
           </div>
         </div>
       </nav>
 
       {/* Login Modal */}
       {showModal && (
-        <LoginModal
-          onClose={() => setShowModal(false)}
-          onLogin={handleLogin}
+        <LoginModal onClose={() => setShowModal(false)} />
+      )}
+
+      {/* Notifications */}
+      {showNotifications && (
+        <Notifications
+          show={showNotifications}
+          onClose={() => setShowNotifications(false)}
         />
       )}
     </>

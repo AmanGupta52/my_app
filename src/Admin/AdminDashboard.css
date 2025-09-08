@@ -1,0 +1,15 @@
+/* Card hover effect */
+.card:hover {
+  transform: translateY(-5px);
+  transition: all 0.3s ease;
+}
+
+/* Table styling */
+.table th, .table td {
+  vertical-align: middle;
+}
+
+.nav-tabs .nav-link {
+  cursor: pointer;
+  font-weight: 500;
+}

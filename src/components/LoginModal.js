@@ -1,74 +1,96 @@
 // src/components/LoginModal.js
 import React, { useState, useContext } from "react";
-import "./LoginModal.css";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import "./LoginModal.css";
 
-function LoginModal({ onClose }) {
+const LoginModal = ({ onClose }) => {
   const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [isLogin, setIsLogin] = useState(true);
+  const [loginRole, setLoginRole] = useState("user"); // user, admin, moderator
+  const [forgotPassword, setForgotPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     fullName: "",
     age: "",
     email: "",
     password: "",
     otp: "",
+    role: "user",
+    newPassword: "",
   });
 
-  const [otpSent, setOtpSent] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const sendOTP = async () => {
+  // ✅ Send OTP for Register / Forgot Password
+  const handleSendOtp = async () => {
     if (!formData.email) {
-      return setMessage({ type: "error", text: "Enter your email first." });
+      setMessage({ type: "error", text: "Please enter your email first." });
+      return;
     }
-    setLoading(true);
-    setMessage(null);
-
     try {
       const res = await axios.post("http://localhost:5000/api/auth/send-otp", {
         email: formData.email,
       });
-      setMessage({
-        type: "success",
-        text: res.data.message || "OTP sent to your email.",
-      });
-      setOtpSent(true);
+      setMessage({ type: "success", text: res.data.message });
     } catch (err) {
       setMessage({
         type: "error",
-        text: err.response?.data?.message || "Failed to send OTP",
+        text: err.response?.data?.message || "Failed to send OTP.",
       });
-    } finally {
-      setLoading(false);
     }
   };
 
+  // ✅ Handle Register/Login/Forgot
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(null);
     setLoading(true);
 
-    const { fullName, email, password, age, otp } = formData;
-
-    if (!email || !password || (!isLogin && (!fullName || !age || !otp))) {
-      setMessage({ type: "error", text: "Please fill in all required fields." });
-      setLoading(false);
-      return;
-    }
+    const { fullName, age, email, password, otp, role, newPassword } = formData;
 
     try {
-      const endpoint = isLogin ? "/login" : "/register";
+      let endpoint = "";
+      let payload = {};
 
-      const payload = isLogin
-        ? { email, password }
-        : { fullName, age, email, password, otp };
+      if (forgotPassword) {
+        if (!email || !otp || !newPassword) {
+          setMessage({
+            type: "error",
+            text: "Email, OTP, and new password required.",
+          });
+          setLoading(false);
+          return;
+        }
+        endpoint = "/reset-password";
+        payload = { email, otp, newPassword };
+      } else if (isLogin) {
+        if (!email || !password) {
+          setMessage({ type: "error", text: "Email and password required." });
+          setLoading(false);
+          return;
+        }
+        endpoint = "/login";
+        payload = { email, password, role: loginRole };
+      } else {
+        if (!fullName || !age || !otp || !password) {
+          setMessage({
+            type: "error",
+            text: "Full name, age, password and OTP required.",
+          });
+          setLoading(false);
+          return;
+        }
+        endpoint = "/register";
+        payload = { fullName, age, email, password, otp, role: "user" };
+      }
 
       const res = await axios.post(
         `http://localhost:5000/api/auth${endpoint}`,
@@ -77,16 +99,23 @@ function LoginModal({ onClose }) {
 
       setMessage({ type: "success", text: res.data.message || "Success!" });
 
-      // reset form
-      setFormData({ fullName: "", age: "", email: "", password: "", otp: "" });
+      if (isLogin && res.data.token) {
+        await login(email, password);
+      }
 
-      // update AuthContext and close modal
-      login(res.data.user || { email });
+      // ✅ Redirect
+      if (res.data.user?.role === "admin") navigate("/admin-dashboard");
+      else if (res.data.user?.role === "moderator")
+        navigate("/moderator-dashboard");
+      else navigate("/");
+
       onClose();
     } catch (err) {
       setMessage({
         type: "error",
-        text: err.response?.data?.message || "Something went wrong",
+        text:
+          err.response?.data?.message ||
+          "Something went wrong. Please try again.",
       });
     } finally {
       setLoading(false);
@@ -97,105 +126,150 @@ function LoginModal({ onClose }) {
     <div className="auth-overlay">
       <div className="auth-card glassmorphism">
         <button className="close-btn" onClick={onClose}>
-          ×
+          ✖
         </button>
 
-        <h2 className="text-center mb-3">{isLogin ? "Sign In" : "Sign Up"}</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          {forgotPassword
+            ? "Reset Password"
+            : isLogin
+            ? `Login as ${loginRole}`
+            : "Register (User)"}
+        </h2>
 
-        <p className="text-center text-muted mb-4">
-          {isLogin
-            ? "Enter your credentials to continue"
-            : "Fill the form to create your account"}
-        </p>
+        {/* Toggle Role for Login */}
+        {isLogin && !forgotPassword && (
+          <div className="d-flex justify-content-center mb-3">
+            {["user", "moderator", "admin"].map((r) => (
+              <button
+                key={r}
+                className={`btn me-2 ${
+                  loginRole === r ? "btn-warning" : "btn-outline-warning"
+                }`}
+                onClick={() => setLoginRole(r)}
+              >
+                {r.charAt(0).toUpperCase() + r.slice(1)}
+              </button>
+            ))}
+          </div>
+        )}
 
         {message && (
           <div
             className={`alert ${
               message.type === "error" ? "alert-danger" : "alert-success"
-            } py-2`}
+            }`}
           >
             {message.text}
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
-          {!isLogin && (
+          {/* Registration Fields */}
+          {!isLogin && !forgotPassword && (
             <>
               <input
                 type="text"
                 name="fullName"
                 placeholder="Full Name"
-                className="form-control glass-input mb-3"
                 value={formData.fullName}
                 onChange={handleChange}
+                className="form-control glass-input mb-3"
               />
               <input
                 type="number"
                 name="age"
                 placeholder="Age"
-                className="form-control glass-input mb-3"
                 value={formData.age}
                 onChange={handleChange}
+                className="form-control glass-input mb-3"
               />
             </>
           )}
 
+          {/* Common Email Field */}
           <input
             type="email"
             name="email"
             placeholder="Email Address"
-            className="form-control glass-input mb-3"
             value={formData.email}
             onChange={handleChange}
+            className="form-control glass-input mb-3"
           />
 
-          {!isLogin && (
-            <div className="d-flex justify-content-between mb-3">
+          {/* Password Fields */}
+          {!forgotPassword && (
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              className="form-control glass-input mb-3"
+            />
+          )}
+
+          {/* OTP + New Password for Forgot */}
+          {forgotPassword && (
+            <>
+              <div className="d-flex mb-3">
+                <input
+                  type="text"
+                  name="otp"
+                  placeholder="Enter OTP"
+                  value={formData.otp}
+                  onChange={handleChange}
+                  className="form-control glass-input me-2"
+                />
+                <button
+                  type="button"
+                  onClick={handleSendOtp}
+                  className="btn btn-primary"
+                >
+                  Send OTP
+                </button>
+              </div>
+              <input
+                type="password"
+                name="newPassword"
+                placeholder="New Password"
+                value={formData.newPassword}
+                onChange={handleChange}
+                className="form-control glass-input mb-3"
+              />
+            </>
+          )}
+
+          {/* OTP for Registration */}
+          {!isLogin && !forgotPassword && (
+            <div className="d-flex mb-3">
+              <input
+                type="text"
+                name="otp"
+                placeholder="Enter OTP"
+                value={formData.otp}
+                onChange={handleChange}
+                className="form-control glass-input me-2"
+              />
               <button
                 type="button"
-                className="btn btn-outline-secondary btn-sm"
-                onClick={sendOTP}
-                disabled={loading}
+                onClick={handleSendOtp}
+                className="btn btn-primary"
               >
-                {loading
-                  ? "Sending OTP..."
-                  : otpSent
-                  ? "Resend OTP"
-                  : "Send OTP"}
+                Send OTP
               </button>
             </div>
           )}
 
-          {!isLogin && otpSent && (
-            <input
-              type="text"
-              name="otp"
-              placeholder="Enter OTP"
-              className="form-control glass-input mb-3"
-              value={formData.otp}
-              onChange={handleChange}
-            />
-          )}
-
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            className="form-control glass-input mb-3"
-            value={formData.password}
-            onChange={handleChange}
-          />
-
           <button
             type="submit"
-            className="btn btn-warning w-100"
             disabled={loading}
+            className="btn btn-warning w-100 mb-3"
           >
             {loading ? (
-              <div
-                className="spinner-border spinner-border-sm text-light"
-                role="status"
-              ></div>
+              <span className="spinner-border spinner-border-sm"></span>
+            ) : forgotPassword ? (
+              "Reset Password"
             ) : isLogin ? (
               "Login"
             ) : (
@@ -204,22 +278,38 @@ function LoginModal({ onClose }) {
           </button>
         </form>
 
+        {/* Toggle Links */}
         <p className="text-center mt-3">
-          {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-          <span
-            className="toggle-link"
-            onClick={() => {
-              setIsLogin(!isLogin);
-              setOtpSent(false);
-              setMessage(null);
-            }}
-          >
-            {isLogin ? "Register" : "Login"}
-          </span>
+          {forgotPassword ? (
+            <span className="toggle-link" onClick={() => setForgotPassword(false)}>
+              Back to Login
+            </span>
+          ) : isLogin ? (
+            <>
+              Don’t have an account?{" "}
+              <span className="toggle-link" onClick={() => setIsLogin(false)}>
+                Register
+              </span>
+              <br />
+              <span
+                className="toggle-link text-danger"
+                onClick={() => setForgotPassword(true)}
+              >
+                Forgot Password?
+              </span>
+            </>
+          ) : (
+            <>
+              Already have an account?{" "}
+              <span className="toggle-link" onClick={() => setIsLogin(true)}>
+                Login
+              </span>
+            </>
+          )}
         </p>
       </div>
     </div>
   );
-}
+};
 
 export default LoginModal;
