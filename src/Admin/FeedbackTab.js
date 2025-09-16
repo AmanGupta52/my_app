@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useContext, useMemo } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
-import "./ModeratorsTab.css"; // ✅ reuse the same CSS for consistent style
+import "./AdminDashboard.css"; // ✅ reuse the same CSS for consistent style
 
 const API_BASE = "http://localhost:5000/api/admin";
 

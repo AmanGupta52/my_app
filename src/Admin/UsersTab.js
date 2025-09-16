@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext, useMemo } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
-import "./UsersTab.css"; // custom styles
+import "./AdminDashboard.css"; // custom styles
 import { toast } from "react-toastify";
 
 const API_BASE = "http://localhost:5000/api/admin";

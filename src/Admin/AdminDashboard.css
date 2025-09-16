@@ -1,15 +1,314 @@
-/* Card hover effect */
-.card:hover {
-  transform: translateY(-5px);
-  transition: all 0.3s ease;
+/* ============================
+   Modern Admin Dashboard Style
+   ============================ */
+
+/* ---------------------------
+   Global Reset & Body
+--------------------------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-/* Table styling */
-.table th, .table td {
-  vertical-align: middle;
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #e9f0ff, #f7faff);
+  color: #2c3e50;
+  line-height: 1.6;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Container */
+.container-fluid, .dashboard-container {
+  max-width: 1300px;
+  margin: auto;
+  padding: 2rem;
+}
+
+.dashboard-container {
+  min-height: 100vh;
+}
+
+/* ---------------------------
+   Headings & Titles
+--------------------------- */
+h1, h2, h3, h4, h5, h6 {
+  color: inherit;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  font-size: 2.2rem;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+/* ---------------------------
+   Navigation Tabs
+--------------------------- */
+.nav-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  border: none;
+  margin-bottom: 2rem;
+}
+
+.nav-tabs .nav-item {
+  margin-bottom: -1px;
 }
 
 .nav-tabs .nav-link {
-  cursor: pointer;
-  font-weight: 500;
+  background: rgba(255, 255, 255, 0.6);
+  border: none;
+  border-radius: 12px;
+  padding: 0.8rem 1.5rem;
+  color: #555;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
+
+.nav-tabs .nav-link:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.9);
+  color: #1a237e;
+}
+
+.nav-tabs .nav-link.active {
+  background: linear-gradient(135deg, #3f51b5, #5c6bc0);
+  color: #fff !important;
+  box-shadow: 0 6px 15px rgba(63, 81, 181, 0.3);
+}
+
+/* ---------------------------
+   Cards & Stats
+--------------------------- */
+.tab-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  animation: fadeIn 0.4s ease;
+  margin-bottom: 2rem;
+}
+
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.stats-card {
+  background: linear-gradient(135deg, #3f51b5, #5c6bc0);
+  border-radius: 16px;
+  color: #fff;
+  padding: 1.8rem;
+  text-align: center;
+  box-shadow: 0 8px 18px rgba(63, 81, 181, 0.25);
+  transition: transform 0.3s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-6px);
+}
+
+.stats-card h4 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.stats-card p {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* ---------------------------
+   Tables
+--------------------------- */
+.table {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.table thead {
+  background: #3f51b5;
+  color: #fff;
+  font-weight: 600;
+}
+
+.table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f4ff;
+}
+
+/* ---------------------------
+   Buttons
+--------------------------- */
+.btn {
+  border-radius: 10px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #3f51b5, #5c6bc0);
+  border: none;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #2c387e, #3949ab);
+  transform: translateY(-2px);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #e53935, #ef5350);
+  border: none;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #b71c1c, #d32f2f);
+  transform: translateY(-2px);
+}
+
+/* ---------------------------
+   Header & Profile
+--------------------------- */
+.dashboard-header {
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-title {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.btn-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 30px;
+  padding: 6px 14px;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+
+.btn-profile:hover {
+  background: rgba(255,255,255,0.9);
+}
+
+.profile-avatar {
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+}
+
+.profile-initial {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #007bff;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------------------------
+   Modals
+--------------------------- */
+.custom-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+.custom-modal-content {
+  background: #fff;
+  color: #333;
+  padding: 2rem;
+  border-radius: 12px;
+  min-width: 300px;
+  max-width: 500px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  animation: fadeIn 0.3s ease;
+}
+
+/* ---------------------------
+   Animations
+--------------------------- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------------------
+   Dark Mode
+--------------------------- */
+.dark-mode {
+  background: #121212;
+  color: #e0e0e0;
+}
+
+.dark-mode .tab-card,
+.dark-mode .custom-modal-content {
+  background: #1e1e1e;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+}
+
+.dark-mode .btn-profile {
+  background: rgba(50,50,50,0.7);
+  color: #e0e0e0;
+}
+
+.dark-mode .btn-profile:hover {
+  background: rgba(70,70,70,0.9);
+}
+
+.dark-mode .nav-tabs .nav-link.active {
+  background: linear-gradient(135deg, #222, #444);
+}
+
+/* ---------------------------
+   Utility Classes
+--------------------------- */
+.text-center { text-align: center; }
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 1rem; }
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 1rem; }
+.p-1 { padding: 0.25rem; }
+.p-2 { padding: 0.5rem; }
+.p-3 { padding: 1rem; }
+.rounded { border-radius: 12px; }
+.shadow { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }

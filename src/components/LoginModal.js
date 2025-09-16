@@ -3,7 +3,7 @@ import React, { useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import "./LoginModal.css";
+import styles from "./LoginModal.module.css";
 
 const LoginModal = ({ onClose }) => {
   const { login } = useContext(AuthContext);
@@ -29,7 +29,6 @@ const LoginModal = ({ onClose }) => {
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  // ✅ Send OTP for Register / Forgot Password
   const handleSendOtp = async () => {
     if (!formData.email) {
       setMessage({ type: "error", text: "Please enter your email first." });
@@ -48,7 +47,6 @@ const LoginModal = ({ onClose }) => {
     }
   };
 
-  // ✅ Handle Register/Login/Forgot
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(null);
@@ -103,7 +101,7 @@ const LoginModal = ({ onClose }) => {
         await login(email, password);
       }
 
-      // ✅ Redirect
+      // Redirect
       if (res.data.user?.role === "admin") navigate("/admin-dashboard");
       else if (res.data.user?.role === "moderator")
         navigate("/moderator-dashboard");
@@ -123,9 +121,9 @@ const LoginModal = ({ onClose }) => {
   };
 
   return (
-    <div className="auth-overlay">
-      <div className="auth-card glassmorphism">
-        <button className="close-btn" onClick={onClose}>
+    <div className={styles.authOverlay}>
+      <div className={`${styles.authCard} ${styles.glassmorphism}`}>
+        <button className={styles.closeBtn} onClick={onClose}>
           ✖
         </button>
 
@@ -137,9 +135,8 @@ const LoginModal = ({ onClose }) => {
             : "Register (User)"}
         </h2>
 
-        {/* Toggle Role for Login */}
         {isLogin && !forgotPassword && (
-          <div className="d-flex justify-content-center mb-3">
+          <div className={`${styles.dFlex} justify-content-center mb-3`}>
             {["user", "moderator", "admin"].map((r) => (
               <button
                 key={r}
@@ -156,8 +153,8 @@ const LoginModal = ({ onClose }) => {
 
         {message && (
           <div
-            className={`alert ${
-              message.type === "error" ? "alert-danger" : "alert-success"
+            className={`${styles.alert} ${
+              message.type === "error" ? styles.alertDanger : styles.alertSuccess
             }`}
           >
             {message.text}
@@ -165,7 +162,6 @@ const LoginModal = ({ onClose }) => {
         )}
 
         <form onSubmit={handleSubmit}>
-          {/* Registration Fields */}
           {!isLogin && !forgotPassword && (
             <>
               <input
@@ -174,7 +170,7 @@ const LoginModal = ({ onClose }) => {
                 placeholder="Full Name"
                 value={formData.fullName}
                 onChange={handleChange}
-                className="form-control glass-input mb-3"
+                className={`${styles.glassInput} mb-3`}
               />
               <input
                 type="number"
@@ -182,22 +178,20 @@ const LoginModal = ({ onClose }) => {
                 placeholder="Age"
                 value={formData.age}
                 onChange={handleChange}
-                className="form-control glass-input mb-3"
+                className={`${styles.glassInput} mb-3`}
               />
             </>
           )}
 
-          {/* Common Email Field */}
           <input
             type="email"
             name="email"
             placeholder="Email Address"
             value={formData.email}
             onChange={handleChange}
-            className="form-control glass-input mb-3"
+            className={`${styles.glassInput} mb-3`}
           />
 
-          {/* Password Fields */}
           {!forgotPassword && (
             <input
               type="password"
@@ -205,21 +199,20 @@ const LoginModal = ({ onClose }) => {
               placeholder="Password"
               value={formData.password}
               onChange={handleChange}
-              className="form-control glass-input mb-3"
+              className={`${styles.glassInput} mb-3`}
             />
           )}
 
-          {/* OTP + New Password for Forgot */}
           {forgotPassword && (
             <>
-              <div className="d-flex mb-3">
+              <div className={`${styles.dFlex} mb-3`}>
                 <input
                   type="text"
                   name="otp"
                   placeholder="Enter OTP"
                   value={formData.otp}
                   onChange={handleChange}
-                  className="form-control glass-input me-2"
+                  className={`${styles.glassInput} me-2`}
                 />
                 <button
                   type="button"
@@ -235,21 +228,20 @@ const LoginModal = ({ onClose }) => {
                 placeholder="New Password"
                 value={formData.newPassword}
                 onChange={handleChange}
-                className="form-control glass-input mb-3"
+                className={`${styles.glassInput} mb-3`}
               />
             </>
           )}
 
-          {/* OTP for Registration */}
           {!isLogin && !forgotPassword && (
-            <div className="d-flex mb-3">
+            <div className={`${styles.dFlex} mb-3`}>
               <input
                 type="text"
                 name="otp"
                 placeholder="Enter OTP"
                 value={formData.otp}
                 onChange={handleChange}
-                className="form-control glass-input me-2"
+                className={`${styles.glassInput} me-2`}
               />
               <button
                 type="button"
@@ -278,21 +270,26 @@ const LoginModal = ({ onClose }) => {
           </button>
         </form>
 
-        {/* Toggle Links */}
         <p className="text-center mt-3">
           {forgotPassword ? (
-            <span className="toggle-link" onClick={() => setForgotPassword(false)}>
+            <span
+              className={styles.toggleLink}
+              onClick={() => setForgotPassword(false)}
+            >
               Back to Login
             </span>
           ) : isLogin ? (
             <>
               Don’t have an account?{" "}
-              <span className="toggle-link" onClick={() => setIsLogin(false)}>
+              <span
+                className={styles.toggleLink}
+                onClick={() => setIsLogin(false)}
+              >
                 Register
               </span>
               <br />
               <span
-                className="toggle-link text-danger"
+                className={`${styles.toggleLink} text-danger`}
                 onClick={() => setForgotPassword(true)}
               >
                 Forgot Password?
@@ -301,7 +298,10 @@ const LoginModal = ({ onClose }) => {
           ) : (
             <>
               Already have an account?{" "}
-              <span className="toggle-link" onClick={() => setIsLogin(true)}>
+              <span
+                className={styles.toggleLink}
+                onClick={() => setIsLogin(true)}
+              >
                 Login
               </span>
             </>

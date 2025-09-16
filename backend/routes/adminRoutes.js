@@ -73,12 +73,13 @@ router.get("/", verifyAdmin, async (req, res) => {
 
 
 /**
- * 👉 ADD new admin + send OTP to existing admins
+ * 👉 ADD new admin (OTP required in same step)
  */
 router.post("/", verifyAdmin, async (req, res) => {
   try {
-    const { fullName, email, password } = req.body;
+    const { fullName, email, password, otp } = req.body;
 
+    // Check if admin already exists
     const existing = await Admin.findOne({ email });
     if (existing) {
       return res
@@ -86,39 +87,64 @@ router.post("/", verifyAdmin, async (req, res) => {
         .json({ message: "Admin with this email already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // ✅ If no OTP provided → generate and send OTP to other admins
+    if (!otp) {
+      const generatedOtp = generateOTP();
+
+      // Temporarily store pending admin in memory (better: Redis or DB)
+      global.pendingAdmin = {
+        fullName,
+        email,
+        password,
+        otp: generatedOtp,
+      };
+
+      // Send OTP to other admins
+      const otherAdmins = await Admin.find();
+      for (const admin of otherAdmins) {
+        try {
+          await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: admin.email,
+            subject: "🔐 New Admin Approval Required",
+            text: `Hello ${admin.fullName},\n\nA new admin (${fullName}) is being added.\nYour OTP is: ${generatedOtp}\n\nUse this OTP to approve.`,
+          });
+        } catch (err) {
+          console.error(`Failed to send email to ${admin.email}:`, err.message);
+        }
+      }
+
+      return res.json({
+        message: "OTP sent to existing admins. Please enter it to continue.",
+      });
+    }
+
+    // ✅ If OTP provided → validate
+    if (!global.pendingAdmin || global.pendingAdmin.email !== email) {
+      return res.status(400).json({ message: "No pending admin request found." });
+    }
+
+    if (otp !== global.pendingAdmin.otp) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    // ✅ OTP is valid → create admin
+    const hashedPassword = await bcrypt.hash(global.pendingAdmin.password, 10);
     const newAdmin = new Admin({
-      fullName,
-      email,
+      fullName: global.pendingAdmin.fullName,
+      email: global.pendingAdmin.email,
       password: hashedPassword,
       role: "admin",
     });
+
     await newAdmin.save();
 
-    // Generate OTP and notify other admins
-    const otp = generateOTP();
-    const otherAdmins = await Admin.find({ _id: { $ne: newAdmin._id } });
-
-    for (const admin of otherAdmins) {
-      try {
-        await transporter.sendMail({
-          from: process.env.EMAIL_USER,
-          to: admin.email,
-          subject: "🔐 New Admin Added - OTP Notification",
-          text: `Hello ${admin.fullName},\n\nA new admin (${fullName}) has been added.\nYour OTP is: ${otp}\n\nIf this was unexpected, please verify immediately.`,
-        });
-      } catch (err) {
-        console.error(`Failed to send email to ${admin.email}:`, err.message);
-      }
-    }
-
-    // store OTP in DB for verification
-    newAdmin.otp = otp;
-    await newAdmin.save();
+    // clear pending
+    global.pendingAdmin = null;
 
     res.status(201).json({
-      message: "✅ Admin added successfully. OTP sent to other admins.",
-      admin: { ...newAdmin._doc, password: undefined, otp: undefined },
+      message: "✅ Admin added successfully after OTP verification.",
+      admin: { ...newAdmin._doc, password: undefined },
     });
   } catch (error) {
     res
@@ -127,29 +153,6 @@ router.post("/", verifyAdmin, async (req, res) => {
   }
 });
 
-/**
- * 👉 VERIFY OTP
- */
-router.post("/verify-otp", verifyAdmin, async (req, res) => {
-  try {
-    const { adminId, otp } = req.body;
-    const admin = await Admin.findById(adminId);
-
-    if (!admin) return res.status(404).json({ message: "Admin not found" });
-    if (admin.otp !== otp) {
-      return res.status(400).json({ message: "Invalid OTP" });
-    }
-
-    admin.otp = null; // clear OTP after verification
-    await admin.save();
-
-    res.json({ message: "✅ OTP verified successfully" });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error verifying OTP", error: error.message });
-  }
-});
 
 /**
  * 👉 UPDATE admin

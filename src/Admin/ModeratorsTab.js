@@ -1,11 +1,11 @@
+// src/components/ModeratorsTab.jsx
 import React, { useEffect, useState, useContext, useMemo } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
-import "./ModeratorsTab.css";
+import "./ModeratorsTab.css"; // Custom CSS
 
 const API_BASE = "http://localhost:5000/api/admin";
 
-/** Helpers */
 const parseTimeRange = (timeStr = "") => {
   const [from = "", to = ""] = String(timeStr).split("-").map((s) => s.trim());
   const fix = (v) => (v && /^\d{1,2}:\d{2}$/.test(v) ? v.padStart(5, "0") : "");
@@ -27,14 +27,13 @@ const bufferToDataUrl = (img) => {
 
 const availabilityOptions = ["Available", "Busy", "Away", "Offline", "On Leave"];
 const experienceOptions = ["0-1 years", "1-3 years", "3-5 years", "5-10 years", "10+ years"];
-const commonSpecialities = ["Mental Health", "Relationships", "Career", "Addiction", "Trauma", "Anxiety", "Depression"];
 const commonLanguages = ["English", "Spanish", "French", "Arabic", "Hindi", "Mandarin", "German"];
 
 const emptyNewMod = {
   fullName: "",
   title: "",
   availability: "",
-  specialities: [],
+  specialities: "",
   languages: [],
   time: "",
   experience: "",
@@ -57,12 +56,10 @@ const ModeratorsTab = () => {
   const [availabilityFilter, setAvailabilityFilter] = useState("all");
   const [sortBy, setSortBy] = useState("name");
 
-  // Add form state
   const [newMod, setNewMod] = useState(null);
   const [newTimeFrom, setNewTimeFrom] = useState("");
   const [newTimeTo, setNewTimeTo] = useState("");
 
-  // Edit form state
   const [editMod, setEditMod] = useState(null);
   const [editTimeFrom, setEditTimeFrom] = useState("");
   const [editTimeTo, setEditTimeTo] = useState("");
@@ -70,11 +67,9 @@ const ModeratorsTab = () => {
 
   useEffect(() => {
     fetchMods();
-    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
-    // Calculate statistics whenever moderators change
     if (mods.length > 0) {
       const total = mods.length;
       const available = mods.filter(m => m.availability === "Available").length;
@@ -86,12 +81,10 @@ const ModeratorsTab = () => {
   const fetchMods = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE}/moderators`, {
-        headers: authHeader,
-      });
+      const res = await axios.get(`${API_BASE}/moderators`, { headers: authHeader });
       setMods(res.data || []);
     } catch (err) {
-      console.error("Error fetching moderators:", err.response?.data || err.message);
+      console.error(err);
       alert("Failed to fetch moderators");
     } finally {
       setLoading(false);
@@ -101,59 +94,53 @@ const ModeratorsTab = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this moderator?")) return;
     try {
-      await axios.delete(`${API_BASE}/moderators/${id}`, {
-        headers: authHeader,
-      });
-      setMods((prev) => prev.filter((m) => m._id !== id));
+      await axios.delete(`${API_BASE}/moderators/${id}`, { headers: authHeader });
+      setMods(prev => prev.filter(m => m._id !== id));
     } catch (err) {
-      console.error("Error deleting moderator:", err.response?.data || err.message);
+      console.error(err);
       alert("Failed to delete moderator");
     }
   };
 
-  const handleAdd = async () => {
-    if (!newMod) return;
-    
-    // Validation
-    if (!newMod.fullName || !newMod.email || !newMod.password) {
-      alert("Please fill in all required fields (Name, Email, Password)");
+  const handleAddOrUpdate = async (modData, isEdit = false) => {
+    if (!modData.fullName || !modData.email || (!isEdit && !modData.password)) {
+      alert("Please fill required fields");
       return;
     }
-    
     try {
       const formData = new FormData();
-      const time = buildTimeRange(newTimeFrom, newTimeTo);
+      const time = buildTimeRange(isEdit ? editTimeFrom : newTimeFrom, isEdit ? editTimeTo : newTimeTo);
 
-      ["fullName", "title", "availability", "experience", "email", "password"].forEach((k) =>
-        formData.append(k, newMod[k] || "")
+      ["fullName", "title", "availability", "experience", "email"].forEach(k =>
+        formData.append(k, modData[k] || "")
       );
-      formData.append("time", time);
+      if (!isEdit) formData.append("password", modData.password);
+      if (time) formData.append("time", time);
+      formData.append("specialities", modData.specialities || "");
+      formData.append("languages", (modData.languages || []).join(","));
+      if (modData.img) formData.append("img", modData.img);
+      if (!isEdit) formData.append("role", "moderator");
 
-      formData.append("specialities", (newMod.specialities || []).join(","));
-      formData.append("languages", (newMod.languages || []).join(","));
-
-      if (newMod.img) formData.append("img", newMod.img);
-      formData.append("role", "moderator");
-
-      await axios.post(`${API_BASE}/moderators`, formData, {
-        headers: { ...authHeader, "Content-Type": "multipart/form-data" },
-      });
-
-      setNewMod(null);
-      setNewTimeFrom("");
-      setNewTimeTo("");
+      if (isEdit) {
+        if (editImgFile) formData.append("img", editImgFile);
+        await axios.put(`${API_BASE}/moderators/${modData._id}`, formData, { headers: { ...authHeader, "Content-Type": "multipart/form-data" } });
+        setEditMod(null); setEditImgFile(null); setEditTimeFrom(""); setEditTimeTo("");
+      } else {
+        await axios.post(`${API_BASE}/moderators`, formData, { headers: { ...authHeader, "Content-Type": "multipart/form-data" } });
+        setNewMod(null); setNewTimeFrom(""); setNewTimeTo("");
+      }
       fetchMods();
     } catch (err) {
-      console.error("Error adding moderator:", err.response?.data || err.message);
-      alert(err.response?.data?.message || "Failed to add moderator");
+      console.error(err);
+      alert("Failed to save moderator");
     }
   };
 
   const startEdit = (mod) => {
     setEditMod({
       ...mod,
-      specialities: Array.isArray(mod.specialities) ? mod.specialities : (mod.specialities || []),
-      languages: Array.isArray(mod.languages) ? mod.languages : (mod.languages || []),
+      specialities: mod.specialities || "",
+      languages: Array.isArray(mod.languages) ? mod.languages : [],
       img: undefined,
       password: "",
     });
@@ -163,629 +150,160 @@ const ModeratorsTab = () => {
     setEditImgFile(null);
   };
 
-  const handleUpdate = async () => {
-    if (!editMod?._id) return;
-    
-    // Validation
-    if (!editMod.fullName || !editMod.email) {
-      alert("Please fill in all required fields (Name, Email)");
-      return;
-    }
-    
-    try {
-      const formData = new FormData();
-      const time = buildTimeRange(editTimeFrom, editTimeTo);
-
-      ["fullName", "title", "availability", "experience", "email"].forEach((k) =>
-        formData.append(k, editMod[k] || "")
-      );
-      if (time) formData.append("time", time);
-      if (editMod.password) formData.append("password", editMod.password);
-
-      formData.append("specialities", (editMod.specialities || []).join(","));
-      formData.append("languages", (editMod.languages || []).join(","));
-
-      if (editImgFile) formData.append("img", editImgFile);
-
-      await axios.put(`${API_BASE}/moderators/${editMod._id}`, formData, {
-        headers: { ...authHeader, "Content-Type": "multipart/form-data" },
-      });
-
-      setEditMod(null);
-      setEditImgFile(null);
-      setEditTimeFrom("");
-      setEditTimeTo("");
-      fetchMods();
-    } catch (err) {
-      console.error("Error updating moderator:", err.response?.data || err.message);
-      alert(err.response?.data?.message || "Failed to update moderator");
-    }
-  };
-
-  // Filter and sort moderators
   const filteredMods = useMemo(() => {
     let result = mods;
-    
-    // Filter by search term
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      result = result.filter(mod => 
+      result = result.filter(mod =>
         mod.fullName.toLowerCase().includes(term) ||
         mod.email.toLowerCase().includes(term) ||
-        mod.specialities.some(s => s.toLowerCase().includes(term)) ||
-        mod.languages.some(l => l.toLowerCase().includes(term))
+        (mod.specialities || "").toLowerCase().includes(term) ||
+        (mod.languages || []).some(l => l.toLowerCase().includes(term))
       );
     }
-    
-    // Filter by availability
     if (availabilityFilter !== "all") {
       result = result.filter(mod => mod.availability === availabilityFilter);
     }
-    
-    // Sort
-    if (sortBy === "name") {
-      result = [...result].sort((a, b) => a.fullName.localeCompare(b.fullName));
-    } else if (sortBy === "availability") {
-      result = [...result].sort((a, b) => a.availability.localeCompare(b.availability));
-    }
-    
+    if (sortBy === "name") result = [...result].sort((a, b) => a.fullName.localeCompare(b.fullName));
+    else if (sortBy === "availability") result = [...result].sort((a, b) => a.availability.localeCompare(b.availability));
     return result;
   }, [mods, searchTerm, availabilityFilter, sortBy]);
 
   return (
     <div className="moderators-page container py-4">
-      <div className="d-flex align-items-center justify-content-between mb-4">
-        <h2 className="mb-0">Moderator Management</h2>
-        <button
-          className="btn btn-primary d-flex align-items-center"
-          onClick={() => {
-            setNewMod({ ...emptyNewMod });
-            setNewTimeFrom("");
-            setNewTimeTo("");
-          }}
-        >
-          <i className="bi bi-plus-circle me-2"></i> Add Moderator
+      {/* Header */}
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2>Moderator Management</h2>
+        <button className="btn btn-primary" onClick={() => setNewMod({ ...emptyNewMod })}>
+          Add Moderator
         </button>
       </div>
 
-      {/* Statistics Cards */}
+      {/* Stats */}
       <div className="row mb-4">
-        <div className="col-md-4">
-          <div className="stat-card card bg-primary text-white shadow-sm">
-            <div className="card-body">
-              <div className="d-flex align-items-center">
-                <div className="stat-icon me-3">
-                  <i className="bi bi-people-fill fs-1"></i>
-                </div>
-                <div>
-                  <h6 className="card-title mb-0">Total Moderators</h6>
-                  <h3 className="mb-0">{stats.total}</h3>
-                </div>
-              </div>
-            </div>
+        <div className="col-md-4"><div className="card text-white bg-primary p-3 mb-3"><h6>Total Moderators</h6><h3>{stats.total}</h3></div></div>
+        <div className="col-md-4"><div className="card text-white bg-success p-3 mb-3"><h6>Available</h6><h3>{stats.available}</h3></div></div>
+        <div className="col-md-4"><div className="card text-white bg-warning p-3 mb-3"><h6>Busy</h6><h3>{stats.busy}</h3></div></div>
+      </div>
+
+      {/* Search & Filter */}
+      <div className="card mb-4 p-3">
+        <div className="row g-3">
+          <div className="col-md-6">
+            <input className="form-control" placeholder="Search..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
           </div>
-        </div>
-        <div className="col-md-4">
-          <div className="stat-card card bg-success text-white shadow-sm">
-            <div className="card-body">
-              <div className="d-flex align-items-center">
-                <div className="stat-icon me-3">
-                  <i className="bi bi-check-circle-fill fs-1"></i>
-                </div>
-                <div>
-                  <h6 className="card-title mb-0">Available</h6>
-                  <h3 className="mb-0">{stats.available}</h3>
-                </div>
-              </div>
-            </div>
+          <div className="col-md-3">
+            <select className="form-select" value={availabilityFilter} onChange={e => setAvailabilityFilter(e.target.value)}>
+              <option value="all">All Status</option>
+              {availabilityOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+            </select>
           </div>
-        </div>
-        <div className="col-md-4">
-          <div className="stat-card card bg-warning text-white shadow-sm">
-            <div className="card-body">
-              <div className="d-flex align-items-center">
-                <div className="stat-icon me-3">
-                  <i className="bi bi-exclamation-circle-fill fs-1"></i>
-                </div>
-                <div>
-                  <h6 className="card-title mb-0">Busy</h6>
-                  <h3 className="mb-0">{stats.busy}</h3>
-                </div>
-              </div>
-            </div>
+          <div className="col-md-3">
+            <select className="form-select" value={sortBy} onChange={e => setSortBy(e.target.value)}>
+              <option value="name">Name</option>
+              <option value="availability">Availability</option>
+            </select>
           </div>
         </div>
       </div>
 
-      {/* Filters and Search */}
-      <div className="card shadow-sm mb-4">
-        <div className="card-body">
-          <div className="row g-3">
-            <div className="col-md-6">
-              <label className="form-label">Search Moderators</label>
-              <div className="input-group">
-                <span className="input-group-text"><i className="bi bi-search"></i></span>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Search by name, email, specialities..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="col-md-3">
-              <label className="form-label">Filter by Availability</label>
-              <select
-                className="form-select"
-                value={availabilityFilter}
-                onChange={(e) => setAvailabilityFilter(e.target.value)}
-              >
-                <option value="all">All Statuses</option>
-                {availabilityOptions.map(opt => (
-                  <option key={opt} value={opt}>{opt}</option>
-                ))}
-              </select>
-            </div>
-            <div className="col-md-3">
-              <label className="form-label">Sort By</label>
-              <select
-                className="form-select"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-              >
-                <option value="name">Name</option>
-                <option value="availability">Availability</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {loading ? (
-        <div className="text-center py-5">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-          <p className="mt-2 text-muted">Loading moderators...</p>
-        </div>
-      ) : filteredMods.length === 0 ? (
-        <div className="empty-card card p-5 text-center text-muted">
-          <i className="bi bi-people fs-1 mb-3 d-block"></i>
-          <h4>No moderators found</h4>
-          <p>Try adjusting your search or filters, or add a new moderator.</p>
-        </div>
-      ) : (
-        <div className="card shadow-sm">
-          <div className="table-responsive">
-            <table className="table table-hover align-middle mb-0">
-              <thead className="table-dark">
-                <tr>
-                  <th style={{ width: 60 }}></th>
-                  <th>Name & Title</th>
-                  <th>Contact</th>
-                  <th>Status</th>
-                  <th>Working Hours</th>
-                  <th>Experience</th>
-                  <th>Specialities</th>
-                  <th>Languages</th>
-                  <th style={{ width: 140 }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredMods.map((mod) => {
-                  const avatar = bufferToDataUrl(mod.img) || "";
-                  const availabilityClass = mod.availability === "Available" ? "badge bg-success" : 
-                                          mod.availability === "Busy" ? "badge bg-warning" :
-                                          mod.availability === "Away" ? "badge bg-secondary" :
-                                          mod.availability === "On Leave" ? "badge bg-danger" : "badge bg-light text-dark";
-                  return (
-                    <tr key={mod._id}>
-                      <td>
-                        <div className="avatar position-relative">
-                          {avatar ? (
-                            <img src={avatar} alt="avatar" className="rounded-circle" />
-                          ) : (
-                            <div className="avatar-fallback rounded-circle d-flex align-items-center justify-content-center">
-                              {mod.fullName ? mod.fullName.charAt(0).toUpperCase() : 'M'}
-                            </div>
-                          )}
-                          <span className={`status-indicator ${mod.availability === "Available" ? "online" : mod.availability === "Busy" ? "busy" : "offline"}`}></span>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="fw-semibold">{mod.fullName}</div>
-                        <div className="text-muted small">{mod.title || "Moderator"}</div>
-                      </td>
-                      <td>
-                        <div>{mod.email}</div>
-                        {mod.phone && <div className="text-muted small">{mod.phone}</div>}
-                      </td>
-                      <td>
-                        <span className={availabilityClass}>
-                          {mod.availability || "Unknown"}
-                        </span>
-                      </td>
-                      <td>{mod.time ? mod.time.replace("-", " to ") : "-"}</td>
-                      <td>{mod.experience || "-"}</td>
-                      <td>
-                        <div className="d-flex flex-wrap gap-1">
-                          {(mod.specialities || []).slice(0, 2).map((spec, i) => (
-                            <span key={i} className="badge bg-light text-dark">{spec}</span>
-                          ))}
-                          {(mod.specialities || []).length > 2 && (
-                            <span className="badge bg-light text-dark">+{(mod.specialities || []).length - 2}</span>
-                          )}
-                        </div>
-                      </td>
-                      <td>
-                        <div className="d-flex flex-wrap gap-1">
-                          {(mod.languages || []).slice(0, 2).map((lang, i) => (
-                            <span key={i} className="badge bg-info text-dark">{lang}</span>
-                          ))}
-                          {(mod.languages || []).length > 2 && (
-                            <span className="badge bg-light text-dark">+{(mod.languages || []).length - 2}</span>
-                          )}
-                        </div>
-                      </td>
-                      <td>
-                        <div className="d-flex gap-2">
-                          <button 
-                            className="btn btn-sm btn-outline-primary" 
-                            onClick={() => startEdit(mod)}
-                            title="Edit moderator"
-                          >
-                            <i className="bi bi-pencil"></i>
-                          </button>
-                          <button 
-                            className="btn btn-sm btn-outline-danger" 
-                            onClick={() => handleDelete(mod._id)}
-                            title="Delete moderator"
-                          >
-                            <i className="bi bi-trash"></i>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+      {/* Table */}
+      {loading ? <div className="text-center py-5">Loading...</div> : (
+        <div className="table-responsive card shadow-sm p-3 mb-4">
+          <table className="table table-hover align-middle">
+            <thead className="table-dark">
+              <tr>
+                <th></th><th>Name</th><th>Email</th><th>Status</th><th>Hours</th><th>Experience</th><th>Specialities</th><th>Languages</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredMods.map(mod => {
+                const avatar = bufferToDataUrl(mod.img);
+                const availabilityClass = mod.availability === "Available" ? "badge bg-success" : mod.availability === "Busy" ? "badge bg-warning" : "badge bg-secondary";
+                return (
+                  <tr key={mod._id}>
+                    <td>{avatar ? <img src={avatar} alt="avatar" className="rounded-circle" width={40} height={40} /> : <div className="avatar-fallback rounded-circle">{mod.fullName?.charAt(0)}</div>}</td>
+                    <td>{mod.fullName}<br/><small>{mod.title || "Moderator"}</small></td>
+                    <td>{mod.email}</td>
+                    <td><span className={availabilityClass}>{mod.availability || "-"}</span></td>
+                    <td>{mod.time?.replace("-", " to ") || "-"}</td>
+                    <td>{mod.experience || "-"}</td>
+                    <td>{mod.specialities || "-"}</td>
+                    <td>{(mod.languages || []).join(", ")}</td>
+                    <td>
+                      <button className="btn btn-sm btn-outline-primary me-1" onClick={() => startEdit(mod)}>Edit</button>
+                      <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(mod._id)}>Delete</button>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
         </div>
       )}
 
-      {/* Add Form Modal */}
-      {newMod && (
-        <div className="modal-backdrop show">
-          <div className="modal d-block">
-            <div className="modal-dialog modal-lg">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Add New Moderator</h5>
-                  <button type="button" className="btn-close" onClick={() => setNewMod(null)}></button>
-                </div>
-                <div className="modal-body">
-                  <div className="row g-3">
-                    <div className="col-md-6">
-                      <label className="form-label required">Full Name</label>
-                      <input
-                        className="form-control"
-                        value={newMod.fullName}
-                        onChange={(e) => setNewMod({ ...newMod, fullName: e.target.value })}
-                        required
-                      />
-                    </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label">Title</label>
-                      <input
-                        className="form-control"
-                        value={newMod.title}
-                        onChange={(e) => setNewMod({ ...newMod, title: e.target.value })}
-                        placeholder="e.g., Senior Therapist"
-                      />
-                    </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label">Availability</label>
-                      <select
-                        className="form-select"
-                        value={newMod.availability}
-                        onChange={(e) => setNewMod({ ...newMod, availability: e.target.value })}
-                      >
-                        <option value="">Select availability</option>
-                        {availabilityOptions.map(opt => (
-                          <option key={opt} value={opt}>{opt}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="col-md-3">
-                      <label className="form-label">Working Time From</label>
-                      <input
-                        type="time"
-                        className="form-control"
-                        value={newTimeFrom}
-                        onChange={(e) => setNewTimeFrom(e.target.value)}
-                      />
-                    </div>
-
-                    <div className="col-md-3">
-                      <label className="form-label">Working Time To</label>
-                      <input
-                        type="time"
-                        className="form-control"
-                        value={newTimeTo}
-                        onChange={(e) => setNewTimeTo(e.target.value)}
-                      />
-                    </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label">Experience</label>
-                      <select
-                        className="form-select"
-                        value={newMod.experience}
-                        onChange={(e) => setNewMod({ ...newMod, experience: e.target.value })}
-                      >
-                        <option value="">Select experience level</option>
-                        {experienceOptions.map(opt => (
-                          <option key={opt} value={opt}>{opt}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label required">Email</label>
-                      <input
-                        type="email"
-                        className="form-control"
-                        value={newMod.email}
-                        onChange={(e) => setNewMod({ ...newMod, email: e.target.value })}
-                        required
-                      />
-                    </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label required">Password</label>
-                      <input
-                        type="password"
-                        className="form-control"
-                        value={newMod.password}
-                        onChange={(e) => setNewMod({ ...newMod, password: e.target.value })}
-                        required
-                      />
-                    </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label">Profile Image</label>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="form-control"
-                        onChange={(e) => setNewMod({ ...newMod, img: e.target.files?.[0] || null })}
-                      />
-                    </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label">Specialities</label>
-                      <select
-                        className="form-select"
-                        multiple
-                        value={newMod.specialities}
-                        onChange={(e) => {
-                          const selected = Array.from(e.target.selectedOptions, option => option.value);
-                          setNewMod({ ...newMod, specialities: selected });
-                        }}
-                        size="3"
-                      >
-                        {commonSpecialities.map(spec => (
-                          <option key={spec} value={spec}>{spec}</option>
-                        ))}
-                      </select>
-                      <div className="form-text">Hold Ctrl/Cmd to select multiple</div>
-                    </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label">Languages</label>
-                      <select
-                        className="form-select"
-                        multiple
-                        value={newMod.languages}
-                        onChange={(e) => {
-                          const selected = Array.from(e.target.selectedOptions, option => option.value);
-                          setNewMod({ ...newMod, languages: selected });
-                        }}
-                        size="3"
-                      >
-                        {commonLanguages.map(lang => (
-                          <option key={lang} value={lang}>{lang}</option>
-                        ))}
-                      </select>
-                      <div className="form-text">Hold Ctrl/Cmd to select multiple</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" onClick={() => setNewMod(null)}>
-                    Cancel
-                  </button>
-                  <button type="button" className="btn btn-primary" onClick={handleAdd}>
-                    Add Moderator
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Form Modal */}
-      {editMod && (
-        <div className="modal-backdrop show">
-          <div className="modal d-block">
-            <div className="modal-dialog modal-lg">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Edit Moderator</h5>
-                  <button type="button" className="btn-close" onClick={() => setEditMod(null)}></button>
-                </div>
-                <div className="modal-body">
-                  <div className="row g-3">
-                    <div className="col-md-6">
-                      <label className="form-label required">Full Name</label>
-                      <input
-                        className="form-control"
-                        value={editMod.fullName || ""}
-                        onChange={(e) => setEditMod({ ...editMod, fullName: e.target.value })}
-                        required
-                      />
-                    </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label">Title</label>
-                      <input
-                        className="form-control"
-                        value={editMod.title || ""}
-                        onChange={(e) => setEditMod({ ...editMod, title: e.target.value })}
-                      />
-                    </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label">Availability</label>
-                      <select
-                        className="form-select"
-                        value={editMod.availability || ""}
-                        onChange={(e) => setEditMod({ ...editMod, availability: e.target.value })}
-                      >
-                        <option value="">Select availability</option>
-                        {availabilityOptions.map(opt => (
-                          <option key={opt} value={opt}>{opt}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="col-md-3">
-                      <label className="form-label">Working Time From</label>
-                      <input
-                        type="time"
-                        className="form-control"
-                        value={editTimeFrom}
-                        onChange={(e) => setEditTimeFrom(e.target.value)}
-                      />
-                    </div>
-
-                    <div className="col-md-3">
-                      <label className="form-label">Working Time To</label>
-                      <input
-                        type="time"
-                        className="form-control"
-                        value={editTimeTo}
-                        onChange={(e) => setEditTimeTo(e.target.value)}
-                      />
-                    </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label">Experience</label>
-                      <select
-                        className="form-select"
-                        value={editMod.experience || ""}
-                        onChange={(e) => setEditMod({ ...editMod, experience: e.target.value })}
-                      >
-                        <option value="">Select experience level</option>
-                        {experienceOptions.map(opt => (
-                          <option key={opt} value={opt}>{opt}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label required">Email</label>
-                      <input
-                        type="email"
-                        className="form-control"
-                        value={editMod.email || ""}
-                        onChange={(e) => setEditMod({ ...editMod, email: e.target.value })}
-                        required
-                      />
-                    </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label">Password</label>
-                      <input
-                        type="password"
-                        className="form-control"
-                        value={editMod.password || ""}
-                        onChange={(e) => setEditMod({ ...editMod, password: e.target.value })}
-                        placeholder="Leave blank to keep current password"
-                      />
-                    </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label">Profile Image</label>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="form-control"
-                        onChange={(e) => setEditImgFile(e.target.files?.[0] || null)}
-                      />
-                      <div className="form-text">Select a new image to replace the current one</div>
-                    </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label">Specialities</label>
-                      <select
-                        className="form-select"
-                        multiple
-                        value={editMod.specialities}
-                        onChange={(e) => {
-                          const selected = Array.from(e.target.selectedOptions, option => option.value);
-                          setEditMod({ ...editMod, specialities: selected });
-                        }}
-                        size="3"
-                      >
-                        {commonSpecialities.map(spec => (
-                          <option key={spec} value={spec}>{spec}</option>
-                        ))}
-                      </select>
-                      <div className="form-text">Hold Ctrl/Cmd to select multiple</div>
-                    </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label">Languages</label>
-                      <select
-                        className="form-select"
-                        multiple
-                        value={editMod.languages}
-                        onChange={(e) => {
-                          const selected = Array.from(e.target.selectedOptions, option => option.value);
-                          setEditMod({ ...editMod, languages: selected });
-                        }}
-                        size="3"
-                      >
-                        {commonLanguages.map(lang => (
-                          <option key={lang} value={lang}>{lang}</option>
-                        ))}
-                      </select>
-                      <div className="form-text">Hold Ctrl/Cmd to select multiple</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" onClick={() => setEditMod(null)}>
-                    Cancel
-                  </button>
-                  <button type="button" className="btn btn-primary" onClick={handleUpdate}>
-                    Save Changes
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Add/Edit forms */}
+      {newMod && <ModeratorForm mod={newMod} setMod={setNewMod} timeFrom={newTimeFrom} setTimeFrom={setNewTimeFrom} timeTo={newTimeTo} setTimeTo={setNewTimeTo} onSubmit={(data) => handleAddOrUpdate(data)} />}
+      {editMod && <ModeratorForm mod={editMod} setMod={setEditMod} timeFrom={editTimeFrom} setTimeFrom={setEditTimeFrom} timeTo={editTimeTo} setTimeTo={setEditTimeTo} onSubmit={(data) => handleAddOrUpdate(data, true)} imgFile={editImgFile} setImgFile={setEditImgFile} />}
     </div>
   );
 };
 
 export default ModeratorsTab;
+
+/** Form Component with text input for Specialities and checkbox for Languages */
+const ModeratorForm = ({ mod, setMod, timeFrom, setTimeFrom, timeTo, setTimeTo, onSubmit, imgFile, setImgFile }) => {
+  const commonLanguages = ["English", "Spanish", "French", "Arabic", "Hindi", "Mandarin", "German"];
+  const toggleLanguage = (lang) => {
+    const newLangs = mod.languages.includes(lang) ? mod.languages.filter(l => l !== lang) : [...mod.languages, lang];
+    setMod({ ...mod, languages: newLangs });
+  };
+
+  return (
+    <div className="card shadow-sm p-4 mb-4">
+      <div className="card-header d-flex justify-content-between"><h5>{mod._id ? "Edit" : "Add"} Moderator</h5><button className="btn-close" onClick={() => setMod(null)}></button></div>
+      <div className="card-body">
+        <div className="row g-3">
+          <div className="col-md-6"><label>Full Name</label><input className="form-control" value={mod.fullName || ""} onChange={e => setMod({...mod, fullName: e.target.value})} /></div>
+          <div className="col-md-6"><label>Title</label><input className="form-control" value={mod.title || ""} onChange={e => setMod({...mod, title: e.target.value})} /></div>
+          <div className="col-md-6"><label>Availability</label>
+            <select className="form-select" value={mod.availability || ""} onChange={e => setMod({...mod, availability: e.target.value})}>
+              <option value="">Select</option>
+              {availabilityOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+            </select>
+          </div>
+          <div className="col-md-3"><label>From</label><input type="time" className="form-control" value={timeFrom || ""} onChange={e => setTimeFrom(e.target.value)} /></div>
+          <div className="col-md-3"><label>To</label><input type="time" className="form-control" value={timeTo || ""} onChange={e => setTimeTo(e.target.value)} /></div>
+          <div className="col-md-6"><label>Experience</label>
+            <select className="form-select" value={mod.experience || ""} onChange={e => setMod({...mod, experience: e.target.value})}>
+              <option value="">Select</option>
+              {experienceOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+            </select>
+          </div>
+          <div className="col-md-6"><label>Email</label><input type="email" className="form-control" value={mod.email || ""} onChange={e => setMod({...mod, email: e.target.value})} /></div>
+          {!mod._id && <div className="col-md-6"><label>Password</label><input type="password" className="form-control" value={mod.password || ""} onChange={e => setMod({...mod, password: e.target.value})} /></div>}
+          <div className="col-md-6"><label>Profile Image</label><input type="file" accept="image/*" className="form-control" onChange={e => (mod._id ? setImgFile(e.target.files?.[0]) : setMod({...mod, img: e.target.files?.[0]}))} /></div>
+
+          <div className="col-md-6"><label>Specialities (comma-separated)</label>
+            <input className="form-control" value={mod.specialities || ""} onChange={e => setMod({...mod, specialities: e.target.value})} placeholder="e.g., Mental Health, Career"/>
+          </div>
+
+          <div className="col-md-6"><label>Languages</label>
+            <div className="d-flex flex-wrap gap-2">
+              {commonLanguages.map(lang => (
+                <div className="form-check" key={lang}>
+                  <input className="form-check-input" type="checkbox" id={`lang-${lang}`} checked={mod.languages.includes(lang)} onChange={() => toggleLanguage(lang)} />
+                  <label className="form-check-label" htmlFor={`lang-${lang}`}>{lang}</label>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="card-footer d-flex justify-content-end gap-2">
+        <button className="btn btn-secondary" onClick={() => setMod(null)}>Cancel</button>
+        <button className="btn btn-primary" onClick={() => onSubmit(mod)}>{mod._id ? "Save Changes" : "Add Moderator"}</button>
+      </div>
+    </div>
+  )
+};
