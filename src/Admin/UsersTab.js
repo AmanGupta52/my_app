@@ -234,9 +234,7 @@ const UsersTab = () => {
                 }
               >
                 <option value="user">User</option>
-                <option value="moderator">Moderator</option>
-                <option value="expert">Expert</option>
-                <option value="admin">Admin</option>
+               
               </select>
             </div>
           </div>

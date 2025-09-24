@@ -26,10 +26,10 @@ const AdminsTab = () => {
   });
   const [editAdmin, setEditAdmin] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const [otpStep, setOtpStep] = useState(false); // 🔑 stage control
+  const [otpStep, setOtpStep] = useState(false);
   const [otp, setOtp] = useState("");
   const [createdAdminId, setCreatedAdminId] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // now only for buttons, not full screen
 
   // Fetch all admins
   useEffect(() => {
@@ -37,7 +37,6 @@ const AdminsTab = () => {
   }, []);
 
   const fetchAdmins = async () => {
-    setLoading(true);
     try {
       const res = await axios.get(API_URL, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -45,12 +44,10 @@ const AdminsTab = () => {
       setAdmins(res.data.admins || res.data || []);
     } catch (err) {
       console.error("Error fetching admins:", err);
-    } finally {
-      setLoading(false);
     }
   };
 
-  // Step 1: Add admin (pending until OTP)
+  // Step 1: Add admin
   const handleAdd = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -60,7 +57,7 @@ const AdminsTab = () => {
       });
 
       setCreatedAdminId(res.data.admin?._id || null);
-      setOtpStep(true); // switch to OTP input
+      setOtpStep(true);
       alert("✅ Admin created. OTP sent to other admins.");
     } catch (err) {
       console.error(err);
@@ -100,6 +97,10 @@ const AdminsTab = () => {
 
   // Delete admin
   const handleDelete = async (id) => {
+    if (admins.length === 1) {
+      alert("⚠️ Cannot delete. At least one admin must remain.");
+      return;
+    }
     if (!window.confirm("Are you sure?")) return;
     setLoading(true);
     try {
@@ -141,14 +142,9 @@ const AdminsTab = () => {
         ➕ Add Admin
       </button>
 
-      {/* Loading Overlay */}
-      {loading && (
-        <div className="loading-overlay">
-          <div className="loading-text">Loading...</div>
-        </div>
-      )}
+      {/* Removed fullscreen loading overlay */}
 
-      {/* Add Admin + OTP in the same modal */}
+      {/* Add Admin + OTP Modal */}
       {showForm && (
         <Modal
           onClose={() => {
@@ -162,49 +158,51 @@ const AdminsTab = () => {
             <>
               <h3>Add New Admin</h3>
               <form onSubmit={handleAdd}>
-  <input
-    type="text"
-    placeholder="Full Name"
-    value={newAdmin.fullName}
-    onChange={(e) =>
-      setNewAdmin({ ...newAdmin, fullName: e.target.value })
-    }
-    required
-  />
-  <input
-    type="email"
-    placeholder="Email"
-    value={newAdmin.email}
-    onChange={(e) =>
-      setNewAdmin({ ...newAdmin, email: e.target.value })
-    }
-    required
-  />
-  <input
-    type="password"
-    placeholder="Password"
-    value={newAdmin.password}
-    onChange={(e) =>
-      setNewAdmin({ ...newAdmin, password: e.target.value })
-    }
-    required
-  />
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  value={newAdmin.fullName}
+                  onChange={(e) =>
+                    setNewAdmin({ ...newAdmin, fullName: e.target.value })
+                  }
+                  required
+                />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={newAdmin.email}
+                  onChange={(e) =>
+                    setNewAdmin({ ...newAdmin, email: e.target.value })
+                  }
+                  required
+                />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={newAdmin.password}
+                  onChange={(e) =>
+                    setNewAdmin({ ...newAdmin, password: e.target.value })
+                  }
+                  required
+                />
 
-
-  <div className="form-actions">
-    <button type="submit" className="btn save-btn">
-      ✅ Add Admin
-    </button>
-    <button
-      type="button"
-      className="btn cancel-btn"
-      onClick={() => setShowForm(false)}
-    >
-      ❌ Cancel
-    </button>
-  </div>
-</form>
-
+                <div className="form-actions">
+                  <button
+                    type="submit"
+                    className="btn save-btn"
+                    disabled={loading}
+                  >
+                    {loading ? "⏳ Adding..." : "✅ Add Admin"}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn cancel-btn"
+                    onClick={() => setShowForm(false)}
+                  >
+                    ❌ Cancel
+                  </button>
+                </div>
+              </form>
             </>
           ) : (
             <>
@@ -218,8 +216,12 @@ const AdminsTab = () => {
                   required
                 />
                 <div className="form-actions">
-                  <button type="submit" className="btn save-btn">
-                    ✅ Verify
+                  <button
+                    type="submit"
+                    className="btn save-btn"
+                    disabled={loading}
+                  >
+                    {loading ? "⏳ Verifying..." : "✅ Verify"}
                   </button>
                   <button
                     type="button"
@@ -259,7 +261,10 @@ const AdminsTab = () => {
                     <input
                       value={editAdmin.fullName}
                       onChange={(e) =>
-                        setEditAdmin({ ...editAdmin, fullName: e.target.value })
+                        setEditAdmin({
+                          ...editAdmin,
+                          fullName: e.target.value,
+                        })
                       }
                     />
                   </td>
@@ -272,8 +277,12 @@ const AdminsTab = () => {
                     />
                   </td>
                   <td>
-                    <button className="btn save-btn" onClick={handleUpdate}>
-                      💾 Save
+                    <button
+                      className="btn save-btn"
+                      onClick={handleUpdate}
+                      disabled={loading}
+                    >
+                      {loading ? "⏳ Saving..." : "💾 Save"}
                     </button>
                     <button
                       className="btn cancel-btn"
@@ -297,6 +306,12 @@ const AdminsTab = () => {
                     <button
                       className="btn delete-btn"
                       onClick={() => handleDelete(admin._id)}
+                      disabled={admins.length === 1} // disable delete if only one admin
+                      title={
+                        admins.length === 1
+                          ? "⚠️ Cannot delete last admin"
+                          : "Delete this admin"
+                      }
                     >
                       🗑️ Delete
                     </button>

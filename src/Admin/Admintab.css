@@ -161,6 +161,24 @@ input:focus {
   font-weight: 500;
 }
 
+/* Dark mode table */
+.dark-mode .data-table {
+  background-color: #1e1e1e !important;
+  color: #ffffff !important;
+  border: 1px solid #ffffff !important;
+}
+
+.dark-mode .data-table th,
+
+
+.dark-mode .data-table tr:nth-child(even) {
+  background-color: #2a2a2a !important;
+}
+
+.dark-mode .data-table tr:hover {
+  background-color: #333 !important;
+}
+
 /* Modal Animation */
 @keyframes modalFadeIn {
   from { transform: scale(0.9); opacity: 0; }

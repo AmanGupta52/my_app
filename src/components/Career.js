@@ -26,15 +26,40 @@ function Career() {
       <Header />
 
       {/* Page Header */}
-      <header className="text-center py-5 text-white" style={{ backgroundImage: 'url(/images/banner-bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <h1 className="fw-bold">Career Guidance</h1>
-      </header>
+     <header
+  className="position-relative text-white text-center"
+  style={{
+    backgroundImage: 'url(/images/service1.png)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundAttachment: 'fixed',
+    minHeight: '20vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }}
+>
+  {/* 🔶 Overlay */}
+  <div
+    className="position-absolute top-0 start-0 w-100 h-100"
+    style={{
+      backgroundColor: 'rgba(240, 150, 65, 0.5)', // 🔶 orange-tinted overlay
+      zIndex: 1,
+    }}
+  ></div>
+
+  {/* 🔤 Content */}
+  <div className="position-relative z-2">
+    <h1 className="fw-bold bg-opacity-50 px-4 py-2 rounded">
+Career Guidance    </h1>
+  </div>
+</header>
 
       {/* Page Content */}
       <div className="container my-5">
         <div className="row">
           <div className="col-md-8">
-            <img src="https://believeconsultancy.in/images/home/Career%20Guidance%201.jpg" alt="Speaker" className="img-fluid rounded mb-4" />
+            <img src="/images/service10.png" alt="Speaker" className="img-fluid rounded mb-4" />
             <h3 className="fw-bold mb-3">Career Guidance</h3>
             <p><b>Career guidance </b>plays a pivotal role in helping individuals align their educational and professional paths with their personal interests and capabilities. Effective career counseling assists people in discovering their strengths and passions, enabling them to make informed decisions about their future. It is crucial for students and professionals at every stage, from choosing an initial career path to navigating mid-career changes. The guidance provided by career counselors is based on thorough assessments of aptitudes, interests, and market trends, ensuring individuals choose careers that offer both personal satisfaction and professional growth.</p>
             <p><b>Today's dynamic job market </b>demands that individuals not only choose careers wisely but also stay adaptable to ongoing changes in their fields. Career guidance helps in planning not just the first job but a sustainable and flexible career trajectory. Counselors emphasize the importance of continuous learning and skill development, which are essential in keeping pace with technological advancements and economic shifts. By encouraging an understanding of lifelong learning, career guidance ensures individuals remain competitive and relevant in their chosen fields, regardless of evolving industry demands.</p>

@@ -42,7 +42,7 @@ function Header() {
             style={{ width: "50px", height: "50px", objectFit: "contain" }}
           />
           <div>
-            <div>Believe Consultancy</div>
+            <div>Balanced Minds Consultancy</div>
             <small className="d-block" style={{ fontSize: "12px" }}>
               Empowering Minds
             </small>

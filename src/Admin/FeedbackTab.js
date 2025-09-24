@@ -87,7 +87,7 @@ const FeedbackTab = () => {
   };
 
   return (
-    <div className="moderators-page container py-4">
+    <div className="users-page container py-4">
       <div className="d-flex align-items-center justify-content-between mb-3">
         <h2 className="mb-0">Feedbacks</h2>
         <button

@@ -23,78 +23,49 @@ function Study_abroad() {
   return (
     <>
       {/* Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-4">
-        <Link className="navbar-brand fw-bold" to="/">
-          BC
-          <small className="d-block" style={{ fontSize: '12px' }}>Believe Consultancy</small>
-        </Link>
-
-        <button className="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-          <span className="navbar-toggler-icon"></span>
-        </button>
-
-        <div id="navbarNav" className="collapse navbar-collapse">
-          <ul className="navbar-nav ms-auto">
-            <li className="nav-item">
-              <Link to="/" className="nav-link">Home</Link>
-            </li>
-
-            <li className="nav-item">
-              <Link to="/about" className="nav-link">About</Link>
-            </li>
-
-            <li
-              className="nav-item dropdown"
-              onMouseEnter={() => document.getElementById('servicesMenu').classList.add('show')}
-              onMouseLeave={() => document.getElementById('servicesMenu').classList.remove('show')}
-            >
-             
-              <Link
-                to="/service"
-                className="nav-link"
-                onClick={(e) => {
-                  // Ensure navigation works normally
-                  e.stopPropagation();
-                }}
-              >
-                Services <i className="bi bi-chevron-down ms-1"></i>
-              </Link>
-            
-              <ul className="dropdown-menu" id="servicesMenu">
-                {servicesList.map((service, index) => (
-                  <li key={index}>
-                    <Link to={service.path} className="dropdown-item">
-                      {service.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </li>
-
-            <li className="nav-item">
-              <Link to="/experts" className="nav-link">Experts</Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/contact" className="nav-link">Contact</Link>
-            </li>
-          </ul>
-
-          <Link to="/book" className="btn btn-warning ms-3">Book a Session</Link>
-        </div>
-      </nav>
+      <Header />
 
       {/* Page Header */}
-      <header className="text-center py-5 text-white" style={{ backgroundImage: 'url(/images/banner-bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <h1 className="fw-bold">MOTIVATIONAL TALKS / SPEAKER'S</h1>
-      </header>
+      <header
+  className="position-relative text-white text-center"
+  style={{
+    backgroundImage: 'url(/images/service1.png)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundAttachment: 'fixed',
+    minHeight: '20vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }}
+>
+  {/* 🔶 Overlay */}
+  <div
+    className="position-absolute top-0 start-0 w-100 h-100"
+    style={{
+      backgroundColor: 'rgba(240, 150, 65, 0.5)', // 🔶 orange-tinted overlay
+      zIndex: 1,
+    }}
+  ></div>
+
+  {/* 🔤 Content */}
+  <div className="position-relative z-2">
+    <h1 className="fw-bold bg-opacity-50 px-4 py-2 rounded">
+     Study Abroad Consultant
+    </h1>
+  </div>
+</header>
 
       {/* Page Content */}
       <div className="container my-5">
         <div className="row">
           <div className="col-md-8">
-            <img src="/images/speaker.jpg" alt="Speaker" className="img-fluid rounded mb-4" />
-            <h3 className="fw-bold mb-3">Motivational Talks / Speaker's</h3>
-            <p>We believe that motivational talks hold the potential to transform lives, sparking inspiration and unlocking the strength within us to overcome challenges...</p>
+            <img src="/images/service7.png" alt="Speaker" className="img-fluid rounded mb-4" />
+            <h3 className="fw-bold mb-3">Study Abroad Consultant</h3>
+            <p><b>Study Abroad Consultants</b> play a pivotal role in guiding students through the complex landscape of international education. They provide expert advice on choosing the right country, university, and course that align with the student's academic goals and career aspirations. Their services extend to helping with the application process, including preparation for standardized tests, crafting compelling personal statements, and securing letters of recommendation. These consultants serve as a bridge between students and their potential universities abroad, ensuring that aspirants meet all the academic and administrative requirements.</p>
+            <p><b>Moreover, Study Abroad Consultants</b>offer invaluable support in understanding the financial aspects of studying overseas. They assist students in applying for scholarships, understanding the various funding options available, and managing their finances effectively. These consultants also provide insights into the cost of living in different countries, helping students budget their expenses wisely. By offering tailored financial advice, they enable students to make informed decisions that align with their financial constraints and academic goals.</p>
+            <p><b>Lastly, the role of Study Abroad Consultants</b> extends beyond academic and financial advising. They also prepare students for the cultural shift they will experience in a new country. From language barriers to understanding local customs and etiquettes, these consultants equip students with the necessary skills to adapt smoothly to their new environment. This holistic approach not only helps students academically but also enhances their overall experience abroad, making it enriching and less daunting.</p>
+            
             {/* truncated for brevity */}
           </div>
 

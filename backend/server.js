@@ -3,6 +3,8 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const cors = require("cors");
 
+
+
 dotenv.config();
 connectDB();
 
@@ -29,6 +31,10 @@ app.use("/api/feedback", require("./routes/feedbackRoutes"));
 
 // ✅ Admin routes
 app.use("/api/admin", require("./routes/adminRoutes"));
+
+// ✅ Payment routes
+app.use("/api/payment", require("./routes/paymentRoutes"));
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

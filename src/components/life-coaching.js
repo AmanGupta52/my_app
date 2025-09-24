@@ -60,7 +60,7 @@ function Life_coaching() {
       <div className="container my-5">
         <div className="row">
           <div className="col-md-8">
-            <img src="/images/https://believeconsultancy.in/images/home/Life%20Coaching%201.jpg.jpg" alt="Speaker" className="img-fluid rounded mb-4" />
+            <img src="/images/service4.png" alt="Speaker" className="img-fluid rounded mb-4" />
             <h3 className="fw-bold mb-3">Life Coaching</h3>
             <p><b>Life coaching </b>is a transformative process that guides individuals through personal and professional challenges to reach their fullest potential. It involves a partnership between the coach and the client, aiming to unlock latent abilities and foster an environment of growth. Coaches help clients set realistic goals, encouraging accountability while providing the tools and strategies needed for success. This personalized support is crucial for navigating life's complexities, making life coaching an invaluable resource for those seeking meaningful changes.</p>
             <p>In today's fast-paced world, <b>stress and uncertainty</b> often cloud our judgment and decision-making capabilities. Life coaches step in to clear this fog, offering clarity and fresh perspectives on personal and professional dilemmas. They employ various techniques, such as motivational interviewing and cognitive behavioral strategies, to empower clients to overcome internal barriers. This leads to improved self-confidence and decision-making skills, essential for personal growth and career advancement.</p>

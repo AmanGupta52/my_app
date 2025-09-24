@@ -170,10 +170,10 @@ const ModeratorsTab = () => {
   }, [mods, searchTerm, availabilityFilter, sortBy]);
 
   return (
-    <div className="moderators-page container py-4">
+    <div className="users-page container py-4">
       {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Moderator Management</h2>
+      <div className="r mb-4 users-page container">
+        <h2 lassName="mb-0">Moderator Management</h2>
         <button className="btn btn-primary" onClick={() => setNewMod({ ...emptyNewMod })}>
           Add Moderator
         </button>
@@ -209,7 +209,7 @@ const ModeratorsTab = () => {
 
       {/* Table */}
       {loading ? <div className="text-center py-5">Loading...</div> : (
-        <div className="table-responsive card shadow-sm p-3 mb-4">
+        <div className="table-responsive card shadow-sm p-3 mb-4 ">
           <table className="table table-hover align-middle">
             <thead className="table-dark">
               <tr>

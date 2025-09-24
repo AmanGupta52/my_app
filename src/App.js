@@ -1,5 +1,4 @@
 import './App.css';
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Homepage from './components/Homepage';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -38,7 +37,7 @@ function App() {
           <Route path='/Notifications' element={<Notifications />} />
           <Route path="/Counselling" element={<Counselling />} />
           <Route path="/Career" element={<Career />} />
-          <Route path="/life_coaching" element={<Lifecoaching />} />
+          <Route path="/life-coaching" element={<Lifecoaching />} />
           <Route path="/soft-skills" element={<Softskills />} />
           <Route path="/image-consultant" element={<Imageconsultant />} />
           <Route path="/study-abroad" element={<Studyabroad />} />
