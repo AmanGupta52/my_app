@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Expert = require("../models/Expert");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const multer = require("multer");
 
 // ================== MULTER CONFIG ==================
