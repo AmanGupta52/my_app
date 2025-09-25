@@ -3,7 +3,6 @@ import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";   // ✅ Import navigate
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./AdminDashboard.css";
-const API_BASE = process.env.REACT_APP_API_BASE;
 import { AuthContext } from "../context/AuthContext";  
 import StatsTab from "./StatsTab";
 import UsersTab from "./UsersTab";
@@ -16,7 +15,7 @@ const AdminDashboard = () => {
   const { user, logout } = useContext(AuthContext); 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();  // ✅ Initialize navigate
-
+  const API_BASE = process.env.REACT_APP_API_BASE;
   const [stats, setStats] = useState({});
   const [activeTab, setActiveTab] = useState("stats");
   const [darkMode, setDarkMode] = useState(false);
@@ -24,14 +23,14 @@ const AdminDashboard = () => {
   const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
-    if (!token) return;
+    if (!token  || !API_BASE) return;
     fetch(`${API_BASE}/api/admin/stats`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => (res.ok ? res.json() : Promise.reject("Unauthorized")))
       .then((data) => setStats(data))
       .catch((err) => console.error("Error fetching stats:", err));
-  }, [token]);
+  }, [token, API_BASE]);
 
   // ✅ Get first letter of admin name
   const getInitial = (name) => (name ? name.charAt(0).toUpperCase() : "A");

@@ -11,7 +11,6 @@ function Moderator() {
   const [loading, setLoading] = useState(true);
   const [meetingLinks, setMeetingLinks] = useState({});
   const [notes, setNotes] = useState({});
-  const [statusFilter, setStatusFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("pending");
   const [stats, setStats] = useState({

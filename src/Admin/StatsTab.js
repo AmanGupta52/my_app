@@ -2,7 +2,6 @@
 import React, { useState, useContext } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-const API_BASE = process.env.REACT_APP_API_BASE;
 import {
   BarChart,
   Bar,

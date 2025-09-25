@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom"; // ✅ for navigation
 const API_BASE = process.env.REACT_APP_API_BASE;
 
 function Profile() {
-  const { user, token, logout } = useContext(AuthContext);
+  const { user, token } = useContext(AuthContext);
   const [formData, setFormData] = useState({ fullName: "", age: "", email: "" });
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");

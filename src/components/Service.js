@@ -1,4 +1,3 @@
-import React from 'react'; // custom styles here
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from './Header';
 import ClientFeedback from './ClientFeedback';
@@ -17,11 +16,7 @@ function Service() {
     "Reiki Healing"
   ];
 
-  const feedbacks = [
-    { name: "Prachi Mohite", time: "1 month ago", quote: "Mind-Blowing Guidance" },
-    { name: "Aarav Mehta", time: "8 months ago", quote: "Transformative Experience" },
-    { name: "Pooja Sharma", time: "5 months ago", quote: "Exceptional Guidance" }
-  ];
+
   return (
      <>
     <div style={{ backgroundColor: '#F8F2DB' }}>
@@ -46,7 +41,7 @@ function Service() {
               <div className="col-md-4 col-sm-6 mb-4" key={i}>
                 <div className="card h-100 shadow-sm p-3">
                   <h5 className="fw-bold">{title}</h5>
-                  <a href="#" className="text-warning fw-semibold">READ MORE &gt;</a>
+                  <a href="./homepage" className="text-warning fw-semibold">READ MORE &gt;</a>
                 </div>
               </div>
             ))}

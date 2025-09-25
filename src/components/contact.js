@@ -1,8 +1,6 @@
-import React from 'react';
 import './Contact.css'; // Add extra styles if needed
 import 'bootstrap/dist/css/bootstrap.min.css';
 import MapComponent from './MapComponent';
-import { Link } from 'react-router-dom';
 import Header from './Header';
 
 function Contact() {

@@ -28,7 +28,6 @@ const bufferToDataUrl = (img) => {
 
 const availabilityOptions = ["Available", "Busy", "Away", "Offline", "On Leave"];
 const experienceOptions = ["0-1 years", "1-3 years", "3-5 years", "5-10 years", "10+ years"];
-const commonLanguages = ["English", "Spanish", "French", "Arabic", "Hindi", "Mandarin", "German"];
 
 const emptyNewMod = {
   fullName: "",
@@ -67,8 +66,21 @@ const ModeratorsTab = () => {
   const [editImgFile, setEditImgFile] = useState(null);
 
   useEffect(() => {
-    fetchMods();
-  }, []);
+  const fetchMods = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(`${API_BASE}/moderators`, { headers: authHeader });
+      setMods(res.data || []);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to fetch moderators");
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchMods();
+}, [authHeader]); // include authHeader as dependency
+
 
   useEffect(() => {
     if (mods.length > 0) {

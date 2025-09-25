@@ -53,7 +53,7 @@ const LoginModal = ({ onClose }) => {
     setMessage(null);
     setLoading(true);
 
-    const { fullName, age, email, password, otp, role, newPassword } = formData;
+    const { fullName, age, email, password, otp, newPassword } = formData;
 
     try {
       let endpoint = "";
