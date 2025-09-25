@@ -72,66 +72,65 @@ function Header() {
             </li>
 
             {/* Services Dropdown */}
-            <li
-              className={`nav-item dropdown ${servicesOpen ? "show" : ""}`}
-              onMouseEnter={() => setServicesOpen(true)}
-              onMouseLeave={() => setServicesOpen(false)}
-            >
-              <span
-                className="nav-link dropdown-toggle"
-                role="button"
-                aria-expanded={servicesOpen}
-              >
-                Services
-              </span>
-              <ul className={`dropdown-menu ${servicesOpen ? "show" : ""}`}>
-                <li>
-                  <Link to="/motivation" className="dropdown-item">
-                    Motivational Talks
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/counselling" className="dropdown-item">
-                    Counselling
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/career" className="dropdown-item">
-                    Career Guidance
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/life-coaching" className="dropdown-item">
-                    Life Coaching
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/soft-skills" className="dropdown-item">
-                    Soft Skill Training
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/image-consultant" className="dropdown-item">
-                    Image Consultant
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/study-abroad" className="dropdown-item">
-                    Study Abroad Consultant
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/graphologist" className="dropdown-item">
-                    Graphologist
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/reiki" className="dropdown-item">
-                    Reiki Healing
-                  </Link>
-                </li>
-              </ul>
-            </li>
+            <li className={`nav-item dropdown ${servicesOpen ? "show" : ""}`}>
+        <Link
+          to="/Service" // Optional: default page when clicking the main "Services"
+          className="nav-link dropdown-toggle"
+          role="button"
+          aria-expanded={servicesOpen}
+          onClick={() => setServicesOpen(!servicesOpen)}
+        >
+          Services
+        </Link>
+
+        <ul className={`dropdown-menu ${servicesOpen ? "show" : ""}`}>
+          <li>
+            <Link to="/motivation" className="dropdown-item" onClick={() => setServicesOpen(false)}>
+              Motivational Talks
+            </Link>
+          </li>
+          <li>
+            <Link to="/counselling" className="dropdown-item" onClick={() => setServicesOpen(false)}>
+              Counselling
+            </Link>
+          </li>
+          <li>
+            <Link to="/career" className="dropdown-item" onClick={() => setServicesOpen(false)}>
+              Career Guidance
+            </Link>
+          </li>
+          <li>
+            <Link to="/life-coaching" className="dropdown-item" onClick={() => setServicesOpen(false)}>
+              Life Coaching
+            </Link>
+          </li>
+          <li>
+            <Link to="/soft-skills" className="dropdown-item" onClick={() => setServicesOpen(false)}>
+              Soft Skill Training
+            </Link>
+          </li>
+          <li>
+            <Link to="/image-consultant" className="dropdown-item" onClick={() => setServicesOpen(false)}>
+              Image Consultant
+            </Link>
+          </li>
+          <li>
+            <Link to="/study-abroad" className="dropdown-item" onClick={() => setServicesOpen(false)}>
+              Study Abroad
+            </Link>
+          </li>
+          <li>
+            <Link to="/graphologist" className="dropdown-item" onClick={() => setServicesOpen(false)}>
+              Graphologist
+            </Link>
+          </li>
+          <li>
+            <Link to="/reiki" className="dropdown-item" onClick={() => setServicesOpen(false)}>
+              Reiki Healing
+            </Link>
+          </li>
+        </ul>
+      </li>
 
             <li className="nav-item">
               <Link to="/experts" className="nav-link">
