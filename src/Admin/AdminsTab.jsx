@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
 import "./Admintab.css";
+const API_BASE = process.env.REACT_APP_API_BASE;
 
-const API_URL = "http://localhost:5000/api/admin";
+const API_URL = `${API_BASE}/api/admin`;
 
 // Modal component using Portal
 const Modal = ({ children, onClose }) => {

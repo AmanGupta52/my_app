@@ -3,7 +3,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";   // ✅ Import navigate
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./AdminDashboard.css";
-
+const API_BASE = process.env.REACT_APP_API_BASE;
 import { AuthContext } from "../context/AuthContext";  
 import StatsTab from "./StatsTab";
 import UsersTab from "./UsersTab";
@@ -25,7 +25,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     if (!token) return;
-    fetch("http://localhost:5000/api/admin/stats", {
+    fetch(`${API_BASE}/api/admin/stats`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => (res.ok ? res.json() : Promise.reject("Unauthorized")))

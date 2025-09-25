@@ -3,8 +3,9 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import "./AdminDashboard.css"; // custom styles
 import { toast } from "react-toastify";
+const API_BASE1 = process.env.REACT_APP_API_BASE;
 
-const API_BASE = "http://localhost:5000/api/admin";
+const API_BASE = `${API_BASE1}/api/admin`;
 
 const emptyUser = {
   fullName: "",
