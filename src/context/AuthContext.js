@@ -1,6 +1,7 @@
 // src/context/AuthContext.js
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
+const API_BASE = process.env.REACT_APP_API_BASE;
 
 export const AuthContext = createContext();
 
@@ -26,7 +27,7 @@ export function AuthProvider({ children }) {
       setLoading(true);
       setAuthError(null);
 
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await axios.post(`${API_BASE}/api/auth/login`, {
         email,
         password,
       });

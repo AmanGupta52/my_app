@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import FeedbackForm from "./FeedbackForm";
+const API_BASE = process.env.REACT_APP_API_BASE;
 
 export default function FeedbackSection({ user }) {
   const [feedbacks, setFeedbacks] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/feedback")
+    fetch(`${API_BASE}/api/feedback`)
       .then((res) => res.json())
       .then((data) => setFeedbacks(data))
       .catch((err) => console.error("Error fetching feedback:", err));

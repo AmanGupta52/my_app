@@ -5,6 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Header from "./Header";
 import ClientFeedback from "./ClientFeedback";
 import BookingModal from "./BookingModal";
+const API_BASE = process.env.REACT_APP_API_BASE;
 
 function Experts() {
   const [experts, setExperts] = useState([]);
@@ -21,7 +22,7 @@ function Experts() {
 
   // Fetch experts
   useEffect(() => {
-    fetch("http://localhost:5000/api/experts")
+    fetch(`${API_BASE}/api/experts`)
       .then((res) => res.json())
       .then((data) => {
         setExperts(data);

@@ -3,6 +3,7 @@ import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom"; // ✅ for navigation
+const API_BASE = process.env.REACT_APP_API_BASE;
 
 function Profile() {
   const { user, token, logout } = useContext(AuthContext);
@@ -21,7 +22,7 @@ function Profile() {
 
     const fetchProfile = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/auth/profile", {
+        const res = await axios.get(`${API_BASE}/api/auth/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = res.data;
@@ -65,7 +66,7 @@ function Profile() {
 
     try {
       const res = await axios.put(
-        "http://localhost:5000/api/auth/profile",
+        `${API_BASE}/api/auth/profile`,
         { fullName: formData.fullName, age: formData.age },
         {
           headers: { Authorization: `Bearer ${token}` },

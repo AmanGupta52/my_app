@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+const API_BASE = process.env.REACT_APP_API_BASE;
 
 
 export default function FeedbackForm({ onFeedbackAdded }) {
@@ -21,7 +22,7 @@ export default function FeedbackForm({ onFeedbackAdded }) {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/api/feedback", {
+      const res = await fetch(`${API_BASE}/api/feedback`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newFeedback),

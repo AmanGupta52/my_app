@@ -2,7 +2,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Modal, Button, Form, Spinner } from "react-bootstrap";
 import { AuthContext } from "../context/AuthContext";
-
+const API_BASE = process.env.REACT_APP_API_BASE;
 /**
  * BookingModal
  * - First shows a booking form (prefilled from user if available)
@@ -114,7 +114,7 @@ const BookingModal = ({ show, handleClose, expert }) => {
       }
 
       // 1) create order on backend (best practice)
-      const orderResp = await fetch("http://localhost:5000/api/payment/order", {
+      const orderResp = await fetch(`${API_BASE}api/payment/order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: amountINR }),
@@ -166,7 +166,7 @@ const BookingModal = ({ show, handleClose, expert }) => {
         handler: async function (paymentResponse) {
           // successful payment -> verify on backend and create booking
           try {
-            const verifyResp = await fetch("http://localhost:5000/api/payment/verify", {
+            const verifyResp = await fetch(`${API_BASE}/api/payment/verify`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ paymentResponse, booking: bookingPayload }),

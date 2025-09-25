@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import "./Moderator.css"; // custom styles
+const API_BASE = process.env.REACT_APP_API_BASE;
 
 function Moderator() {
   const { user } = useContext(AuthContext);
@@ -25,7 +26,7 @@ function Moderator() {
     const fetchBookings = async () => {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:5000/api/bookings");
+        const res = await fetch(`${API_BASE}/api/bookings`);
         const data = await res.json();
 
         // Filter by moderator's full name
@@ -90,7 +91,7 @@ function Moderator() {
   // ✅ Update booking status
   const handleUpdate = async (id, status) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/bookings/${id}`, {
+      const res = await fetch(`${API_BASE}/api/bookings/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -1,6 +1,7 @@
 // src/component/Notifications.js
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+const API_BASE = process.env.REACT_APP_API_BASE;
 
 function Notifications({ show, onClose }) {
   const { user } = useContext(AuthContext);
@@ -10,7 +11,7 @@ function Notifications({ show, onClose }) {
   useEffect(() => {
     if (!user || !show) return;
 
-    fetch(`http://localhost:5000/api/bookings/user/${user.email}`)
+    fetch(`${API_BASE}/api/bookings/user/${user.email}`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch bookings");
         return res.json();

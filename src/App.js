@@ -22,10 +22,14 @@ import AdminDashboard from "./Admin/AdminDashboard";
 import ModeratorDashboard from "./components/ModeratorDashboard";
 import Profile from './components/Profile';
 
+
+
 import { AuthProvider } from './context/AuthContext';  // ✅ import
 
 function App() {
   return (
+    
+
     <AuthProvider>
       <Router>
         <Routes>

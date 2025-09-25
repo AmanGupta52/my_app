@@ -4,6 +4,8 @@ import React, { useEffect } from 'react';
 import Header from './Header';
 import ClientFeedback from "./ClientFeedback";
 import MentalHealthScoreBox from './MentalHealthScoreBox';
+const API_BASE = process.env.REACT_APP_API_BASE;
+
 
 
 
@@ -22,7 +24,9 @@ function Homepage() {
     fadeEls.forEach(el => observer.observe(el));
   }, []);
   return (
+    console.log("API_BASE:", API_BASE),
     <>
+    
     <div style={{ backgroundColor: '#F8F2DB' }}>
       {/* Navbar */}
       <Header />
@@ -59,10 +63,10 @@ function Homepage() {
 
 
       {/* WhatsApp & Call Floating Buttons */}
-      <a href="https://wa.me/918850165438" className="whatsapp-float" target="_blank" rel="noreferrer">
+      <a href="https://wa.me/919022251303" className="whatsapp-float" target="_blank" rel="noreferrer">
         <i className="bi bi-whatsapp"></i>
       </a>
-      <a href="tel:+918850165438" className="call-float" target="_blank" rel="noreferrer">
+      <a href="tel:+919022251303" className="call-float" target="_blank" rel="noreferrer">
         <i className="bi bi-telephone-fill"></i>
       </a>
     </div>

@@ -1,6 +1,7 @@
 
 import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
+const API_BASE = process.env.REACT_APP_API_BASE;
 
 function EditProfile() {
   const { user, setUser } = useContext(AuthContext);
@@ -20,7 +21,7 @@ function EditProfile() {
   const handleSave = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${user._id}`, {
+      const res = await fetch(`${API_BASE}/users/${user._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fullName, email, age }),

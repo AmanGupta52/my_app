@@ -4,6 +4,7 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import styles from "./LoginModal.module.css";
+const API_BASE = process.env.REACT_APP_API_BASE;
 
 const LoginModal = ({ onClose }) => {
   const { login } = useContext(AuthContext);
@@ -35,7 +36,7 @@ const LoginModal = ({ onClose }) => {
       return;
     }
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/send-otp", {
+      const res = await axios.post(`${API_BASE}/api/auth/send-otp`, {
         email: formData.email,
       });
       setMessage({ type: "success", text: res.data.message });
@@ -91,7 +92,7 @@ const LoginModal = ({ onClose }) => {
       }
 
       const res = await axios.post(
-        `http://localhost:5000/api/auth${endpoint}`,
+        `${API_BASE}/api/auth${endpoint}`,
         payload
       );
 
