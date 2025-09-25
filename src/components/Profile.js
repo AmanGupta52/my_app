@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { FaUserCircle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom"; // ✅ for navigation
 
 function Profile() {
   const { user, token, logout } = useContext(AuthContext);
@@ -9,6 +10,7 @@ function Profile() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const navigate = useNavigate(); // ✅ hook
 
   // Fetch profile safely
   useEffect(() => {
@@ -93,7 +95,7 @@ function Profile() {
 
   return (
     <div
-      className="d-flex flex-column align-items-center py-5"
+      className="d-flex flex-column align-items-center py-5 fade-in"
       style={{
         minHeight: "100vh",
         background: "linear-gradient(135deg, #667eea, #764ba2)",
@@ -116,9 +118,7 @@ function Profile() {
 
         {message && (
           <div
-            className={`alert ${
-              isError ? "alert-danger" : "alert-success"
-            } text-center`}
+            className={`alert ${isError ? "alert-danger" : "alert-success"} text-center`}
           >
             {message}
           </div>
@@ -165,20 +165,19 @@ function Profile() {
           <button
             type="submit"
             className="btn btn-warning w-100 fw-bold"
-            style={{ borderRadius: "12px", transition: "0.3s" }}
-            onMouseEnter={(e) => (e.target.style.transform = "scale(1.05)")}
-            onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
+            style={{ borderRadius: "12px" }}
           >
             Update Profile
           </button>
         </form>
 
+        {/* ✅ Back button */}
         <button
-          className="btn btn-outline-light w-100 mt-3"
-          onClick={logout}
-          style={{ borderRadius: "12px" }}
+          className="btn btn-light w-100 mt-3 fw-bold"
+          style={{ borderRadius: "12px", color: "#333" }}
+          onClick={() => navigate(-1)}
         >
-          Logout
+          ⬅ Back
         </button>
       </div>
     </div>

@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useEffect } from 'react';
 import Header from './Header';
 import ClientFeedback from "./ClientFeedback";
+import MentalHealthScoreBox from './MentalHealthScoreBox';
 
 
 
@@ -52,18 +53,7 @@ function Homepage() {
     <a href="/contact" className="btn btn-warning mt-3 px-4">Connect With Us</a>
   </div>
 
-  <div className="score-box bg-white p-4 rounded shadow text-center ms-md-5 fade-in">
-    <h5 className="fw-bold">Find your Mental Health Score</h5>
-    <img
-      src="/images/home2.png"
-      alt="Mental Score"
-      width="200"
-      height="200"
-      className="my-3 img-fluid"
-      style={{ maxHeight: '150px', objectFit: 'contain' }}
-    />
-    <a href="/assessment" className="btn btn-warning w-100">Start Your Assessment</a>
-  </div>
+  <MentalHealthScoreBox /> 
 </div>
 
 

@@ -6,9 +6,6 @@ const Booking = require("../models/Booking"); // Mongoose model
 const router = express.Router();
 require("dotenv").config();
 
-console.log("Razorpay Key:", process.env.RAZORPAY_KEY_ID);
-console.log("Razorpay Secret:", process.env.RAZORPAY_SECRET);
-
 // ✅ Razorpay instance
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
