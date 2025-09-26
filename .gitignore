@@ -4,8 +4,14 @@
 /node_modules
 /.pnp
 .pnp.js
+# Remove the backend .env
+git rm --cached backend/.env
 
-backend/.env
+# Remove the root .env
+git rm --cached .env
+
+# Commit the removal
+git commit -m "Remove .env files from Git tracking"
 
 # testing
 /coverage
