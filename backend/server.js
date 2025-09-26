@@ -35,6 +35,8 @@ app.use("/api/admin", require("./routes/adminRoutes"));
 // ✅ Payment routes
 app.use("/api/payment", require("./routes/paymentRoutes"));
 
+// ✅ News routes
+app.use("/api/news", require("./routes/newsRoutes"));
 
 
 

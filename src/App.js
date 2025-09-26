@@ -21,7 +21,7 @@ import Studyabroad from './components/study-abroad';
 import AdminDashboard from "./Admin/AdminDashboard";
 import ModeratorDashboard from "./components/ModeratorDashboard";
 import Profile from './components/Profile';
-
+import News from "./components/News";
 
 
 import { AuthProvider } from './context/AuthContext';  // ✅ import
@@ -49,6 +49,7 @@ function App() {
           <Route path="/reiki" element={<Reiki />} />
           <Route path="/motivation" element={<Motivation />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/news" element={<News />} />
           
           {/* Dashboards */}
           <Route path="/admin-dashboard" element={<AdminDashboard />} />

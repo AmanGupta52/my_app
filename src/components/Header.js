@@ -1,6 +1,6 @@
 // src/components/Header.js
 import React, { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import LoginModal from "./LoginModal";
 import Notifications from "./Notifications";
 import { AuthContext } from "../context/AuthContext";
@@ -52,6 +52,9 @@ function Header() {
             <li className="nav-item">
               <Link to="/about" className="nav-link">About</Link>
             </li>
+            <li className="nav-item">
+            <Link to="/news" className="nav-link">News</Link>
+             </li>
 
             {/* Services Dropdown */}
             <li className="nav-item dropdown">
