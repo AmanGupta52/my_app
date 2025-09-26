@@ -9,7 +9,6 @@ function Header() {
   const [showModal, setShowModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const { user, logout } = useContext(AuthContext);
-
   return (
     <>
       {/* Topbar */}
