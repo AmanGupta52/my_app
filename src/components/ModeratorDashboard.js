@@ -1,4 +1,4 @@
-// src/pages/Moderator.js 
+// src/pages/Moderator.js
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import "./Moderator.css"; // custom styles
@@ -17,7 +17,7 @@ function Moderator() {
     total: 0,
     pending: 0,
     confirmed: 0,
-    rejected: 0
+    rejected: 0,
   });
 
   // ✅ Fetch bookings and filter by moderator name
@@ -30,24 +30,30 @@ function Moderator() {
 
         // Filter by moderator's full name
         const moderatorBookings = data.filter(
-          booking => booking.expertName === user.fullName
+          (booking) => booking.expertName === user.fullName
         );
 
         setBookings(moderatorBookings);
         setFilteredBookings(moderatorBookings);
-        
+
         // Calculate stats
-        const pendingCount = moderatorBookings.filter(b => b.status === "Pending").length;
-        const confirmedCount = moderatorBookings.filter(b => b.status === "Confirmed").length;
-        const rejectedCount = moderatorBookings.filter(b => b.status === "Rejected").length;
-        
+        const pendingCount = moderatorBookings.filter(
+          (b) => b.status === "Pending"
+        ).length;
+        const confirmedCount = moderatorBookings.filter(
+          (b) => b.status === "Confirmed"
+        ).length;
+        const rejectedCount = moderatorBookings.filter(
+          (b) => b.status === "Rejected"
+        ).length;
+
         setStats({
           total: moderatorBookings.length,
           pending: pendingCount,
           confirmed: confirmedCount,
-          rejected: rejectedCount
+          rejected: rejectedCount,
         });
-        
+
         setLoading(false);
       } catch (err) {
         console.error("Error fetching bookings:", err);
@@ -63,27 +69,28 @@ function Moderator() {
   // ✅ Filter bookings based on status and search term
   useEffect(() => {
     let result = bookings;
-    
+
     // Filter by active tab
     if (activeTab !== "all") {
-      result = result.filter(booking => {
+      result = result.filter((booking) => {
         if (activeTab === "pending") return booking.status === "Pending";
         if (activeTab === "confirmed") return booking.status === "Confirmed";
         if (activeTab === "rejected") return booking.status === "Rejected";
         return true;
       });
     }
-    
+
     // Filter by search term
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      result = result.filter(booking => 
-        booking.fullName.toLowerCase().includes(term) || 
-        booking.email.toLowerCase().includes(term) ||
-        booking.timingFrom.toLowerCase().includes(term)
+      result = result.filter(
+        (booking) =>
+          booking.fullName.toLowerCase().includes(term) ||
+          booking.email.toLowerCase().includes(term) ||
+          booking.timingFrom.toLowerCase().includes(term)
       );
     }
-    
+
     setFilteredBookings(result);
   }, [bookings, activeTab, searchTerm]);
 
@@ -100,12 +107,12 @@ function Moderator() {
         }),
       });
       const data = await res.json();
-      
+
       // Update local state
       setBookings((prev) =>
         prev.map((b) => (b._id === id ? data.booking : b))
       );
-      
+
       // Show success notification
       showNotification(`Booking ${status.toLowerCase()} successfully!`, "success");
     } catch (err) {
@@ -122,15 +129,13 @@ function Moderator() {
 
   // ✅ Show notification
   const showNotification = (message, type) => {
-    // Create notification element
     const notification = document.createElement("div");
     notification.className = `notification ${type}`;
     notification.innerHTML = `
       <span>${message}</span>
       <button onclick="this.parentElement.remove()">&times;</button>
     `;
-    
-    // Add to notification container
+
     const container = document.getElementById("notification-container");
     if (!container) {
       const newContainer = document.createElement("div");
@@ -140,8 +145,7 @@ function Moderator() {
     } else {
       container.appendChild(notification);
     }
-    
-    // Auto remove after 3 seconds
+
     setTimeout(() => {
       if (notification.parentElement) {
         notification.remove();
@@ -151,13 +155,13 @@ function Moderator() {
 
   // ✅ Format date for display
   const formatDate = (dateString) => {
-    const options = { 
-      weekday: 'short', 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    const options = {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
@@ -188,9 +192,7 @@ function Moderator() {
           <p>Manage your expert sessions and meetings</p>
         </div>
         <div className="user-info">
-          <div className="avatar">
-            {user.fullName.charAt(0).toUpperCase()}
-          </div>
+          <div className="avatar">{user.fullName.charAt(0).toUpperCase()}</div>
           <div className="user-details">
             <span className="user-name">{user.fullName}</span>
             <span className="user-role">Moderator</span>
@@ -233,32 +235,32 @@ function Moderator() {
       {/* Filters and Search */}
       <div className="controls-section">
         <div className="tabs">
-          <button 
-            className={activeTab === "all" ? "active" : ""} 
+          <button
+            className={activeTab === "all" ? "active" : ""}
             onClick={() => setActiveTab("all")}
           >
             All ({stats.total})
           </button>
-          <button 
-            className={activeTab === "pending" ? "active" : ""} 
+          <button
+            className={activeTab === "pending" ? "active" : ""}
             onClick={() => setActiveTab("pending")}
           >
             Pending ({stats.pending})
           </button>
-          <button 
-            className={activeTab === "confirmed" ? "active" : ""} 
+          <button
+            className={activeTab === "confirmed" ? "active" : ""}
             onClick={() => setActiveTab("confirmed")}
           >
             Confirmed ({stats.confirmed})
           </button>
-          <button 
-            className={activeTab === "rejected" ? "active" : ""} 
+          <button
+            className={activeTab === "rejected" ? "active" : ""}
             onClick={() => setActiveTab("rejected")}
           >
             Rejected ({stats.rejected})
           </button>
         </div>
-        
+
         <div className="search-box">
           <input
             type="text"
@@ -297,7 +299,9 @@ function Moderator() {
                         <p>{booking.email}</p>
                       </div>
                     </div>
-                    <span className={`status-badge ${booking.status.toLowerCase()}`}>
+                    <span
+                      className={`status-badge ${booking.status.toLowerCase()}`}
+                    >
                       {booking.status}
                     </span>
                   </div>
@@ -313,7 +317,7 @@ function Moderator() {
                         {formatDate(booking.timingFrom)} - {booking.timingTo}
                       </span>
                     </div>
-                    
+
                     {/* Meeting Link */}
                     <div className="input-group">
                       <label>Meeting Link</label>
@@ -331,9 +335,11 @@ function Moderator() {
                           disabled={isConfirmed || isRejected}
                         />
                         {meetingLinks[booking._id] && (
-                          <button 
+                          <button
                             className="icon-button copy-btn"
-                            onClick={() => copyToClipboard(meetingLinks[booking._id])}
+                            onClick={() =>
+                              copyToClipboard(meetingLinks[booking._id])
+                            }
                             title="Copy to clipboard"
                           >
                             📋
@@ -363,32 +369,39 @@ function Moderator() {
                       <>
                         <button
                           className="btn confirm-btn"
-                          onClick={() => handleUpdate(booking._id, "Confirmed")}
+                          onClick={() =>
+                            handleUpdate(booking._id, "Confirmed")
+                          }
                         >
                           <span className="btn-icon">✅</span>
                           Confirm Booking
                         </button>
                         <button
                           className="btn reject-btn"
-                          onClick={() => handleUpdate(booking._id, "Rejected")}
+                          onClick={() =>
+                            handleUpdate(booking._id, "Rejected")
+                          }
                         >
                           <span className="btn-icon">❌</span>
                           Reject Booking
                         </button>
                       </>
                     ) : (
-                      <div className={`status-message ${isConfirmed ? "confirmed" : "rejected"}`}>
+                      <div
+                        className={`status-message ${
+                          isConfirmed ? "confirmed" : "rejected"
+                        }`}
+                      >
                         <span className="message-icon">
                           {isConfirmed ? "✅" : "❌"}
                         </span>
                         <p>
-                          {isConfirmed 
-                            ? "Booking confirmed and notification sent to client" 
-                            : "Booking rejected and notification sent to client"
-                          }
+                          {isConfirmed
+                            ? "Booking confirmed"
+                            : "Booking rejected"}
                         </p>
                         <span className="action-date">
-                          Updated on {new Date().toLocaleDateString()}
+                          Updated on {formatDate(booking.updatedAt)}
                         </span>
                       </div>
                     )}

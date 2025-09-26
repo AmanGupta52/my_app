@@ -4,7 +4,6 @@ import React, { useEffect } from 'react';
 import Header from './Header';
 import ClientFeedback from "./ClientFeedback";
 import MentalHealthScoreBox from './MentalHealthScoreBox';
-const API_BASE = process.env.REACT_APP_API_BASE;
 
 
 
@@ -24,10 +23,11 @@ function Homepage() {
     fadeEls.forEach(el => observer.observe(el));
   }, []);
   return (
-    console.log("API_BASE:", API_BASE),
-    <>
     
-    <div style={{ backgroundColor: '#F8F2DB' }}>
+    <>
+    <div style={{ fontSize: "1.2rem", lineHeight: "1.6" }}>
+    
+    <div style={{ backgroundColor: '#F8F2DB', fontSize: "1.4rem" }}>
       {/* Navbar */}
       <Header />
 
@@ -494,7 +494,7 @@ function Homepage() {
   </div>
 </footer>
 
-
+</div>
     
  </> );
 }

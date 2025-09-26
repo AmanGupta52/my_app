@@ -1,18 +1,8 @@
 // routes/bookingRoutes.js
 const express = require("express");
 const router = express.Router();
-const nodemailer = require("nodemailer");
 const Booking = require("../models/Booking");
 const Expert = require("../models/Expert");
-
-// Setup reusable mail transporter
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
 
 // ======================= USER BOOKINGS =======================
 
@@ -43,22 +33,7 @@ router.post("/", async (req, res) => {
     const booking = new Booking(bookingData);
     await booking.save();
 
-    // Send confirmation email
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "📅 Booking Request Received",
-      html: `
-        <h2>Hello ${fullName},</h2>
-        <p>Your booking with <strong>${expert.fullName}</strong> has been received.</p>
-        <p><b>Preferred Timing:</b> ${timingFrom} - ${timingTo}</p>
-        <p>We will notify you once the expert confirms.</p>
-        <br/>
-        <p>Thank you,<br/>Believe Consultancy Team</p>
-      `,
-    });
-
-    res.status(201).json({ message: "Booking created, awaiting expert confirmation", booking });
+    res.status(201).json({ message: "Booking created successfully", booking });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error creating booking" });
@@ -78,25 +53,7 @@ router.put("/:id", async (req, res) => {
     const booking = await Booking.findByIdAndUpdate(req.params.id, updateData, { new: true });
     if (!booking) return res.status(404).json({ message: "Booking not found" });
 
-    // ✅ Send notification when any of status, meetingLink, or notes are updated
-    if (status || meetingLink || notes) {
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: booking.email,
-        subject: `📢 Booking Update`,
-        html: `
-          <h2>Hello ${booking.fullName},</h2>
-          <p>Your booking with <strong>${booking.expertName}</strong> has been updated.</p>
-          <p><b>Status:</b> ${booking.status}</p>
-          ${meetingLink ? `<p><b>Meeting Link:</b> <a href="${meetingLink}" target="_blank">${meetingLink}</a></p>` : "<p>Meeting link will be shared later.</p>"}
-          ${notes ? `<p><b>Notes:</b> ${notes}</p>` : ""}
-          <br/>
-          <p>Thank you,<br/>Believe Consultancy Team</p>
-        `,
-      });
-    }
-
-    res.json({ message: "Booking updated & user notified", booking });
+    res.json({ message: "Booking updated successfully", booking });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error updating booking" });
@@ -139,18 +96,6 @@ router.delete("/:id", async (req, res) => {
   try {
     const deleted = await Booking.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ message: "Booking not found" });
-
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: deleted.email,
-      subject: "❌ Booking Cancelled",
-      html: `
-        <h2>Hello ${deleted.fullName},</h2>
-        <p>Your booking with <strong>${deleted.expertName}</strong> has been <b>cancelled</b>.</p>
-        <br/>
-        <p>Thank you,<br/>Believe Consultancy Team</p>
-      `,
-    });
 
     res.json({ message: "Booking cancelled successfully" });
   } catch (err) {
