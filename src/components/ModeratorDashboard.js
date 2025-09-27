@@ -2,10 +2,12 @@
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import "./Moderator.css"; // custom styles
+import { useNavigate } from "react-router-dom";
 const API_BASE = process.env.REACT_APP_API_BASE;
 
 function Moderator() {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [filteredBookings, setFilteredBookings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -187,6 +189,12 @@ function Moderator() {
   return (
     <div className="moderator-dashboard">
       {/* Header Section */}
+      <button
+  className="back-btn"
+  onClick={() => navigate("/")}
+>
+  ← Back to Home
+</button>
       <div className="dashboard-header">
         <div className="header-content">
           <h1>Moderator Dashboard</h1>
