@@ -119,7 +119,7 @@ export default function MentalHealthAssessment() {
         <>
           <h5 className="fw-bold mb-3">Your Mental Health Score: {score}</h5>
           <div className="d-grid gap-2 mt-3">
-            <a href="/book-session" className="btn btn-success w-100">
+            <a href="/experts" className="btn btn-success w-100">
               Book a Session
             </a>
             <button className="btn btn-warning w-100" onClick={restart}>

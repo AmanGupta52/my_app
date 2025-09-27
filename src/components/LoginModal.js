@@ -30,23 +30,33 @@ const LoginModal = ({ onClose }) => {
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSendOtp = async () => {
-    if (!formData.email) {
-      setMessage({ type: "error", text: "Please enter your email first." });
-      return;
-    }
-    try {
-      const res = await axios.post(`${API_BASE}/api/auth/send-otp`, {
-        email: formData.email,
-      });
-      setMessage({ type: "success", text: res.data.message });
-    } catch (err) {
-      setMessage({
-        type: "error",
-        text: err.response?.data?.message || "Failed to send OTP.",
-      });
-    }
-  };
+ const handleSendOtp = async () => {
+  if (!formData.email) {
+    setMessage({ type: "error", text: "Please enter your email first." });
+    return;
+  }
+
+  try {
+    const res = await axios.post(`${API_BASE}/api/auth/send-otp`, {
+      email: formData.email,
+    });
+
+    setMessage({
+      type: "success",
+      text: res.data.message || "OTP sent successfully.",
+    });
+
+    console.log("OTP sent successfully to:", formData.email);
+  } catch (err) {
+    console.error("Error sending OTP:", err);
+    setMessage({
+      type: "error",
+      text: err.response?.data?.message || "Failed to send OTP.",
+    });
+  }
+};
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -38,13 +38,13 @@ function Moderator() {
 
         // Calculate stats
         const pendingCount = moderatorBookings.filter(
-          (b) => b.status === "Pending"
+          (b) => b.status.toLowerCase() === "pending"
         ).length;
         const confirmedCount = moderatorBookings.filter(
-          (b) => b.status === "Confirmed"
+          (b) => b.status.toLowerCase() === "confirmed"
         ).length;
         const rejectedCount = moderatorBookings.filter(
-          (b) => b.status === "Rejected"
+          (b) => b.status.toLowerCase() === "rejected"
         ).length;
 
         setStats({
@@ -73,9 +73,10 @@ function Moderator() {
     // Filter by active tab
     if (activeTab !== "all") {
       result = result.filter((booking) => {
-        if (activeTab === "pending") return booking.status === "Pending";
-        if (activeTab === "confirmed") return booking.status === "Confirmed";
-        if (activeTab === "rejected") return booking.status === "Rejected";
+        const status = booking.status.toLowerCase();
+        if (activeTab === "pending") return status === "pending";
+        if (activeTab === "confirmed") return status === "confirmed";
+        if (activeTab === "rejected") return status === "rejected";
         return true;
       });
     }
@@ -283,9 +284,10 @@ function Moderator() {
         ) : (
           <div className="bookings-grid">
             {filteredBookings.map((booking) => {
-              const isConfirmed = booking.status === "Confirmed";
-              const isRejected = booking.status === "Rejected";
-              const isPending = booking.status === "Pending";
+              const status = booking.status.toLowerCase();
+              const isConfirmed = status === "confirmed";
+              const isRejected = status === "rejected";
+              const isPending = status === "pending";
 
               return (
                 <div key={booking._id} className="booking-card">
@@ -300,7 +302,7 @@ function Moderator() {
                       </div>
                     </div>
                     <span
-                      className={`status-badge ${booking.status.toLowerCase()}`}
+                      className={`status-badge ${status}`}
                     >
                       {booking.status}
                     </span>
