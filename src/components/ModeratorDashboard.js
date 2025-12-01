@@ -4,6 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import "./Moderator.css"; // custom styles
 import { useNavigate } from "react-router-dom";
 const API_BASE = process.env.REACT_APP_API_BASE;
+const FRONTEND_URL = process.env.REACT_APP_FRONTEND_URL || window.location.origin;
 
 function Moderator() {
   const { user } = useContext(AuthContext);
@@ -202,7 +203,7 @@ function Moderator() {
 
       const data = await res.json();
 
-      const videoUrl = `${window.location.origin}/video-call?channelName=${data.channelName}&token=${data.token}&appId=${data.appId}&uid=${data.uid}`;
+      const videoUrl = `${FRONTEND_URL}/video-call?channelName=${data.channelName}&token=${data.token}&appId=${data.appId}&uid=${data.uid}`;
 
       setMeetingLinks((prev) => ({
         ...prev,
