@@ -186,15 +186,45 @@ function Moderator() {
       </div>
     );
 
+
+  const generateVideoLink = async (booking) => {
+    try {
+      if (!user || !user.email || !user.role) {
+        showNotification("User info missing. Cannot generate link.", "error");
+        return;
+      }
+
+      // Pass userEmail and userRole to backend
+      const url = `${API_BASE}/api/agora/pair-token?bookingId=${booking._id}&userEmail=${encodeURIComponent(user.email)}&userRole=${encodeURIComponent(user.role)}`;
+
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Failed to generate token");
+
+      const data = await res.json();
+
+      const videoUrl = `${window.location.origin}/video-call?channelName=${data.channelName}&token=${data.token}&appId=${data.appId}&uid=${data.uid}`;
+
+      setMeetingLinks((prev) => ({
+        ...prev,
+        [booking._id]: videoUrl,
+      }));
+
+      showNotification("Meeting link generated!", "success");
+    } catch (err) {
+      console.error("Generate link error:", err);
+      showNotification("Failed to generate meeting link.", "error");
+    }
+  };
+
   return (
     <div className="moderator-dashboard">
       {/* Header Section */}
       <button
-  className="back-btn"
-  onClick={() => navigate("/")}
->
-  ← Back to Home
-</button>
+        className="back-btn"
+        onClick={() => navigate("/")}
+      >
+        ← Back to Home
+      </button>
       <div className="dashboard-header">
         <div className="header-content">
           <h1>Moderator Dashboard</h1>
@@ -324,8 +354,13 @@ function Moderator() {
                     <div className="booking-detail">
                       <span className="detail-label">Scheduled Time:</span>
                       <span className="detail-value">
-                        {formatDate(booking.timingFrom)} - {booking.timingTo}
+                        {booking.meetingDate ? formatDate(booking.meetingDate) : "No date"}
                       </span>
+
+                      <span className="detail-value">
+                        {booking.timingFrom} - {booking.timingTo}
+                      </span>
+
                     </div>
 
                     {/* Meeting Link */}
@@ -334,29 +369,31 @@ function Moderator() {
                       <div className="input-with-action">
                         <input
                           type="text"
-                          placeholder="Paste meeting link here"
                           value={meetingLinks[booking._id] || ""}
-                          onChange={(e) =>
-                            setMeetingLinks({
-                              ...meetingLinks,
-                              [booking._id]: e.target.value,
-                            })
-                          }
-                          disabled={isConfirmed || isRejected}
+                          readOnly
                         />
+
+                        <button
+                          className="icon-button"
+                          onClick={() => generateVideoLink(booking)}
+                          disabled={isConfirmed || isRejected}
+                        >
+                          🔗 Generate
+                        </button>
+
                         {meetingLinks[booking._id] && (
                           <button
                             className="icon-button copy-btn"
                             onClick={() =>
                               copyToClipboard(meetingLinks[booking._id])
                             }
-                            title="Copy to clipboard"
                           >
                             📋
                           </button>
                         )}
                       </div>
                     </div>
+
 
                     {/* Notes */}
                     <div className="input-group">
@@ -374,48 +411,66 @@ function Moderator() {
                   </div>
 
                   {/* Action Buttons */}
+                  {/* Action Buttons */}
                   <div className="card-actions">
                     {isPending ? (
                       <>
                         <button
                           className="btn confirm-btn"
-                          onClick={() =>
-                            handleUpdate(booking._id, "Confirmed")
-                          }
+                          onClick={() => handleUpdate(booking._id, "Confirmed")}
                         >
                           <span className="btn-icon">✅</span>
                           Confirm Booking
                         </button>
+
                         <button
                           className="btn reject-btn"
-                          onClick={() =>
-                            handleUpdate(booking._id, "Rejected")
-                          }
+                          onClick={() => handleUpdate(booking._id, "Rejected")}
                         >
                           <span className="btn-icon">❌</span>
                           Reject Booking
                         </button>
                       </>
                     ) : (
-                      <div
-                        className={`status-message ${
-                          isConfirmed ? "confirmed" : "rejected"
-                        }`}
-                      >
-                        <span className="message-icon">
-                          {isConfirmed ? "✅" : "❌"}
-                        </span>
-                        <p>
-                          {isConfirmed
-                            ? "Booking confirmed"
-                            : "Booking rejected"}
-                        </p>
-                        <span className="action-date">
-                          Updated on {formatDate(booking.updatedAt)}
-                        </span>
-                      </div>
+                      <>
+                        {/* Status Box */}
+                        <div
+                          className={`status-message ${isConfirmed ? "confirmed" : "rejected"
+                            }`}
+                        >
+                          <span className="message-icon">
+                            {isConfirmed ? "✅" : "❌"}
+                          </span>
+
+                          <p>
+                            {isConfirmed ? "Booking confirmed" : "Booking rejected"}
+                          </p>
+
+                          <span className="action-date">
+                            Updated on {formatDate(booking.updatedAt)}
+                          </span>
+                        </div>
+
+                        {/* ⭐ JOIN BUTTON OUTSIDE THE CONFIRMED BOX */}
+                        {isConfirmed && (booking.meetingLink || meetingLinks[booking._id]) && (
+                          <button
+                            className="btn join-btn"
+                            onClick={() =>
+                              window.open(
+                                meetingLinks[booking._id] || booking.meetingLink,
+                                "_blank"
+                              )
+                            }
+                            style={{ marginTop: "10px" }}
+                          >
+                            🎥 Join Meeting
+                          </button>
+                        )}
+
+                      </>
                     )}
                   </div>
+
                 </div>
               );
             })}

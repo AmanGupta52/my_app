@@ -4,7 +4,7 @@ import { Modal, Button, Form, Spinner } from "react-bootstrap";
 import { AuthContext } from "../context/AuthContext";
 import { QRCodeSVG } from "qrcode.react";
 
-const UPI_ID = "amangupta032005@okaxis"; // Replace with your UPI ID
+const UPI_ID = "amangupta032005@okaxis";
 
 const BookingModal = ({ show, handleClose, expert }) => {
   const { user } = useContext(AuthContext);
@@ -15,6 +15,7 @@ const BookingModal = ({ show, handleClose, expert }) => {
     contact: "",
     age: "",
     issue: "",
+    date: "",
     timingFrom: "",
     timingTo: "",
     amount: expert?.price || 1000,
@@ -22,12 +23,11 @@ const BookingModal = ({ show, handleClose, expert }) => {
   });
 
   const [submitting, setSubmitting] = useState(false);
-  const [step, setStep] = useState("booking"); // booking → payment
+  const [step, setStep] = useState("booking");
   const [discountApplied, setDiscountApplied] = useState(false);
 
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-  // Prefill user info
   useEffect(() => {
     if (user) {
       setFormData((prev) => ({
@@ -40,7 +40,6 @@ const BookingModal = ({ show, handleClose, expert }) => {
     }
   }, [user]);
 
-  // Reset price when expert changes
   useEffect(() => {
     if (expert) {
       setFormData((prev) => ({
@@ -51,41 +50,39 @@ const BookingModal = ({ show, handleClose, expert }) => {
   }, [expert]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((p) => ({ ...p, [e.target.name]: e.target.value }));
   };
 
   const applyCoupon = () => {
-    if (!formData.coupon) return alert("Enter a coupon code!");
+    if (!formData.coupon) return alert("Enter coupon!");
     if (formData.coupon.toUpperCase() === "AMAN") {
-      setFormData((prev) => ({ ...prev, amount: 0 }));
+      setFormData((p) => ({ ...p, amount: 0 }));
       setDiscountApplied(true);
-      alert("✅ Coupon applied: Free slot!");
     } else {
-      alert("❌ Invalid coupon");
+      alert("Invalid coupon");
     }
   };
 
   const handleBookingSubmit = (e) => {
     e.preventDefault();
-    if (!formData.fullName || !formData.email || !formData.issue) {
-      return alert("Please fill all required fields.");
+
+    if (!formData.fullName || !formData.email || !formData.issue || !formData.date) {
+      return alert("Fill required fields");
     }
 
     setSubmitting(true);
     setTimeout(() => {
-      setStep("payment");
       setSubmitting(false);
+      setStep("payment");
 
-      // Mobile UPI auto-launch if amount > 0
       if (isMobile && formData.amount > 0 && expert) {
-        window.location.href = `upi://pay?pa=${UPI_ID}&pn=BelieveConsultancy&tn=Consultation with ${expert.fullName}&am=${formData.amount}&cu=INR`;
+        window.location.href = `upi://pay?pa=${UPI_ID}&pn=BelieveConsultancy&tn=Session with ${expert.fullName}&am=${formData.amount}&cu=INR`;
       }
-    }, 500);
+    }, 600);
   };
 
   const confirmBooking = async () => {
-    if (!expert) return alert("Expert not available.");
+    if (!expert) return alert("Expert not found");
 
     setSubmitting(true);
     try {
@@ -96,10 +93,9 @@ const BookingModal = ({ show, handleClose, expert }) => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             ...formData,
+            meetingDate: formData.date,
             expertId: expert._id,
-            verified: formData.amount === 0, // auto-verify free slots
-            timingFrom: formData.timingFrom || "Not Specified",
-            timingTo: formData.timingTo || "Not Specified",
+            verified: formData.amount === 0,
           }),
         }
       );
@@ -109,16 +105,27 @@ const BookingModal = ({ show, handleClose, expert }) => {
 
       alert(
         formData.amount === 0
-          ? "✅ Free slot booked!"
-          : "✅ Booking recorded. Admin will verify payment."
+          ? "Free slot booked!"
+          : "Booking recorded. Admin will confirm after payment."
       );
+
       handleClose();
       setStep("booking");
-      setFormData((prev) => ({ ...prev, coupon: "" }));
+      setFormData({
+        fullName: "",
+        email: "",
+        contact: "",
+        age: "",
+        issue: "",
+        date: "",
+        timingFrom: "",
+        timingTo: "",
+        amount: expert.price,
+        coupon: "",
+      });
       setDiscountApplied(false);
     } catch (err) {
-      console.error("❌ Booking error:", err);
-      alert(`❌ Error: ${err.message}`);
+      alert("Error: " + err.message);
     } finally {
       setSubmitting(false);
     }
@@ -127,161 +134,130 @@ const BookingModal = ({ show, handleClose, expert }) => {
   if (!expert) return null;
 
   return (
-    <Modal show={show} onHide={handleClose} centered>
-      <Modal.Header closeButton className="bg-warning text-dark">
-        <Modal.Title>
-          Book Session with <strong>{expert.fullName || "Expert"}</strong>
+    <Modal show={show} onHide={handleClose} centered size="lg" className="booking-modal">
+      <Modal.Header closeButton className="bg-dark text-light py-3">
+        <Modal.Title className="fw-bold fs-4">
+          Book Session – <span className="text-warning">{expert.fullName}</span>
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body>
-        {/* Step 1: Booking Form */}
+
+      <Modal.Body className="p-4" style={{ background: "#f8f9fa" }}>
+        {/* BOOKING FORM STEP */}
         {step === "booking" && (
-          <Form onSubmit={handleBookingSubmit} className="p-2">
-            <Form.Group className="mb-3">
-              <Form.Label>Full Name</Form.Label>
-              <Form.Control
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleChange}
-                required
-                placeholder="Enter your full name"
-              />
-            </Form.Group>
+          <Form onSubmit={handleBookingSubmit}>
+            <div className="card shadow-sm p-4 mb-4">
+              <h5 className="fw-bold mb-3 text-secondary">Your Details</h5>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                placeholder="you@example.com"
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Contact Number</Form.Label>
-              <Form.Control
-                type="text"
-                name="contact"
-                value={formData.contact}
-                onChange={handleChange}
-                placeholder="Optional"
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Age</Form.Label>
-              <Form.Control
-                type="number"
-                name="age"
-                value={formData.age}
-                onChange={handleChange}
-                placeholder="Your age"
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Preferred Timing</Form.Label>
-              <div className="d-flex gap-2">
-                <Form.Control
-                  type="time"
-                  name="timingFrom"
-                  value={formData.timingFrom}
-                  onChange={handleChange}
-                />
-                <Form.Control
-                  type="time"
-                  name="timingTo"
-                  value={formData.timingTo}
-                  onChange={handleChange}
-                />
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <Form.Label>Full Name *</Form.Label>
+                  <Form.Control name="fullName" value={formData.fullName} onChange={handleChange} />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <Form.Label>Email *</Form.Label>
+                  <Form.Control type="email" name="email" value={formData.email} onChange={handleChange} />
+                </div>
               </div>
-            </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Describe your issue</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                name="issue"
-                value={formData.issue}
-                onChange={handleChange}
-                required
-                placeholder="Explain briefly about your issue"
-              />
-            </Form.Group>
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <Form.Label>Contact</Form.Label>
+                  <Form.Control name="contact" value={formData.contact} onChange={handleChange} />
+                </div>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Coupon Code</Form.Label>
-              <Form.Control
-                name="coupon"
-                value={formData.coupon}
-                onChange={handleChange}
-                placeholder="Enter coupon (if any)"
-                disabled={discountApplied}
-              />
-              <Button
-                variant="outline-secondary"
-                size="sm"
-                className="mt-2"
-                onClick={applyCoupon}
-                disabled={discountApplied}
-              >
-                Apply
-              </Button>
-            </Form.Group>
+                <div className="col-md-6 mb-3">
+                  <Form.Label>Age</Form.Label>
+                  <Form.Control type="number" name="age" value={formData.age} onChange={handleChange} />
+                </div>
+              </div>
+            </div>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Amount to Pay (INR)</Form.Label>
-              <Form.Control
-                type="number"
-                value={formData.amount}
-                disabled
-                className="fw-bold text-success"
-              />
-            </Form.Group>
+            {/* DATE & TIME CARD */}
+            <div className="card shadow-sm p-4 mb-4">
+              <h5 className="fw-bold mb-3 text-secondary">Session Time</h5>
 
-            <Button
-              type="submit"
-              className="w-100 btn-warning fw-bold"
-              disabled={submitting}
-            >
-              {submitting ? (
-                <Spinner animation="border" size="sm" />
-              ) : (
-                "Proceed to Payment"
-              )}
+              <Form.Group className="mb-3">
+                <Form.Label>Date *</Form.Label>
+                <Form.Control
+                  type="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleChange}
+                  min={new Date().toISOString().split("T")[0]}
+                />
+              </Form.Group>
+
+              <div className="row">
+                <div className="col-md-6">
+                  <Form.Label>From</Form.Label>
+                  <Form.Control type="time" name="timingFrom" value={formData.timingFrom} onChange={handleChange} />
+                </div>
+                <div className="col-md-6">
+                  <Form.Label>To</Form.Label>
+                  <Form.Control type="time" name="timingTo" value={formData.timingTo} onChange={handleChange} />
+                </div>
+              </div>
+            </div>
+
+            {/* ISSUE CARD */}
+            <div className="card shadow-sm p-4 mb-4">
+              <h5 className="fw-bold mb-3 text-secondary">Describe Your Issue *</h5>
+              <Form.Control as="textarea" rows={4} name="issue" value={formData.issue} onChange={handleChange} />
+            </div>
+
+            {/* COUPON + AMOUNT */}
+            <div className="card shadow-sm p-4 mb-4">
+              <h5 className="fw-bold mb-3 text-secondary">Payment Details</h5>
+
+              <div className="d-flex gap-2 mb-3">
+                <Form.Control
+                  name="coupon"
+                  value={formData.coupon}
+                  onChange={handleChange}
+                  placeholder="Enter coupon"
+                  disabled={discountApplied}
+                />
+                <Button variant="success" onClick={applyCoupon} disabled={discountApplied}>
+                  Apply
+                </Button>
+              </div>
+
+              <div className="p-3 rounded border bg-white text-center">
+                <h5 className="fw-bold mb-0">
+                  Amount:{" "}
+                  <span className={formData.amount === 0 ? "text-success" : "text-danger"}>
+                    ₹{formData.amount}
+                  </span>
+                </h5>
+              </div>
+            </div>
+
+            <Button type="submit" className="btn-warning w-100 py-3 fw-bold shadow-sm" disabled={submitting}>
+              {submitting ? <Spinner size="sm" /> : "Proceed to Payment →"}
             </Button>
           </Form>
         )}
 
-        {/* Step 2: Payment Section (Desktop only) */}
+        {/* PAYMENT STEP */}
         {step === "payment" && formData.amount > 0 && !isMobile && (
-          <div className="text-center mt-3">
-            <h5>Scan to Pay via UPI</h5>
-            <p className="fw-bold text-success">Amount: ₹{formData.amount}</p>
-            <QRCodeSVG
-              value={`upi://pay?pa=${UPI_ID}&pn=BelieveConsultancy&tn=Consultation with ${expert.fullName}&am=${formData.amount}&cu=INR`}
-              size={200}
-            />
-            <p className="mt-2 small text-muted">Use any UPI app to complete payment</p>
+          <div className="text-center">
+            <h4 className="fw-bold text-success mb-3">Scan & Pay ₹{formData.amount}</h4>
+
+            <div className="bg-white p-4 rounded shadow-sm d-inline-block">
+              <QRCodeSVG
+                size={220}
+                value={`upi://pay?pa=${UPI_ID}&pn=BelieveConsultancy&am=${formData.amount}&cu=INR`}
+              />
+            </div>
+
+            <p className="text-muted mt-3">Use any UPI app to complete payment.</p>
           </div>
         )}
 
-        {/* Confirm Button */}
+        {/* CONFIRM BUTTON */}
         {(step === "payment" || formData.amount === 0) && (
-          <Button
-            className="w-100 btn-success fw-bold mt-3"
-            onClick={confirmBooking}
-            disabled={submitting}
-          >
-            {submitting
-              ? "Submitting..."
-              : formData.amount === 0
-              ? "Book Free Slot"
-              : "I've Paid / Confirm Booking"}
+          <Button className="btn-success w-100 py-3 fw-bold mt-3" onClick={confirmBooking} disabled={submitting}>
+            {submitting ? "Processing..." : formData.amount === 0 ? "Confirm Free Booking" : "I've Paid – Confirm Booking"}
           </Button>
         )}
       </Modal.Body>

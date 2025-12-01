@@ -22,13 +22,14 @@ import AdminDashboard from "./Admin/AdminDashboard";
 import ModeratorDashboard from "./components/ModeratorDashboard";
 import Profile from './components/Profile';
 import News from "./components/News";
+import VideoCall from './components/VideoCall';
 
 
 import { AuthProvider } from './context/AuthContext';  // ✅ import
 
 function App() {
   return (
-    
+
 
     <AuthProvider>
       <Router>
@@ -50,10 +51,12 @@ function App() {
           <Route path="/motivation" element={<Motivation />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/news" element={<News />} />
-          
+          <Route path="/video-call" element={<VideoCall />} />
+
+
           {/* Dashboards */}
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
-          <Route path="/moderator-dashboard" element={<ModeratorDashboard />} /> 
+          <Route path="/moderator-dashboard" element={<ModeratorDashboard />} />
         </Routes>
       </Router>
     </AuthProvider>

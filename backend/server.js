@@ -38,6 +38,10 @@ app.use("/api/payment", require("./routes/paymentRoutes"));
 // ✅ News routes
 app.use("/api/news", require("./routes/newsRoutes"));
 
+// ✅ agora route
+app.use("/api/agora", require("./routes/agoraRoutes"));
+
+
 
 
 const PORT = process.env.PORT || 5000;
